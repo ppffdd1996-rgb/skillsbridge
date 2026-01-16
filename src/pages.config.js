@@ -5,6 +5,9 @@ import PostJob from './pages/PostJob';
 import MyJobs from './pages/MyJobs';
 import Companies from './pages/Companies';
 import Opportunities from './pages/Opportunities';
+import SkillPassport from './pages/SkillPassport';
+import Matches from './pages/Matches';
+import CreateOpportunity from './pages/CreateOpportunity';
 import __Layout from './Layout.jsx';
 
 
@@ -16,6 +19,9 @@ export const PAGES = {
     "MyJobs": MyJobs,
     "Companies": Companies,
     "Opportunities": Opportunities,
+    "SkillPassport": SkillPassport,
+    "Matches": Matches,
+    "CreateOpportunity": CreateOpportunity,
 }
 
 export const pagesConfig = {
