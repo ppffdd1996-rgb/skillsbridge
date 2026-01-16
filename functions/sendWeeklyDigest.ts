@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
 
       // Build digest content
       const digestContent = `
-        <h2>Your Weekly SkillBridge Digest</h2>
+        <h2>Your Weekly SkillsBridge Digest</h2>
         
         ${newMatches.length > 0 ? `
           <h3>🎯 New Matches (${newMatches.length})</h3>
@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
       // Send email
       await base44.asServiceRole.integrations.Core.SendEmail({
         to: user.email,
-        from_name: 'SkillBridge',
+        from_name: 'SkillsBridge',
         subject: `Your Weekly Digest - ${newMatches.length} new matches`,
         body: digestContent
       });
