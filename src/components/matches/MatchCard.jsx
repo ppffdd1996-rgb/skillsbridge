@@ -2,153 +2,187 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, MessageSquare, XCircle, Clock, Target } from "lucide-react";
+import { 
+  Target, Clock, DollarSign, MapPin, CheckCircle2, 
+  X, MessageCircle, Award, Sparkles 
+} from "lucide-react";
 import { motion } from "framer-motion";
 
-const statusColors = {
-  pending: "bg-gray-100 text-gray-700",
-  talent_interested: "bg-blue-100 text-blue-700",
-  creator_interested: "bg-purple-100 text-purple-700",
-  mutual_interest: "bg-green-100 text-green-700",
-  in_trial: "bg-yellow-100 text-yellow-700",
-  completed: "bg-emerald-100 text-emerald-700",
-  declined: "bg-red-100 text-red-700"
+const statusConfig = {
+  pending: { 
+    label: "New Match", 
+    color: "bg-blue-100 text-blue-700 border-blue-200",
+    icon: Clock 
+  },
+  talent_interested: { 
+    label: "Interest Sent", 
+    color: "bg-purple-100 text-purple-700 border-purple-200",
+    icon: Sparkles 
+  },
+  creator_interested: { 
+    label: "Creator Interested", 
+    color: "bg-green-100 text-green-700 border-green-200",
+    icon: CheckCircle2 
+  },
+  mutual_interest: { 
+    label: "Mutual Interest", 
+    color: "bg-indigo-100 text-indigo-700 border-indigo-200",
+    icon: MessageCircle 
+  },
+  in_trial: { 
+    label: "In Trial", 
+    color: "bg-orange-100 text-orange-700 border-orange-200",
+    icon: Award 
+  },
+  completed: { 
+    label: "Completed", 
+    color: "bg-green-100 text-green-700 border-green-200",
+    icon: CheckCircle2 
+  },
+  declined: { 
+    label: "Declined", 
+    color: "bg-gray-100 text-gray-700 border-gray-200",
+    icon: X 
+  }
 };
 
-export default function MatchCard({ match, opportunity, userType, onAccept, onDecline, onChat }) {
-  const isMutualInterest = match.talent_interested && match.creator_interested;
-  
+export default function MatchCard({ 
+  match, 
+  opportunity, 
+  userType = "talent",
+  onAccept,
+  onDecline,
+  onChat 
+}) {
+  if (!opportunity) {
+    return null;
+  }
+
+  const status = statusConfig[match.status] || statusConfig.pending;
+  const StatusIcon = status.icon;
+  const matchPercent = Math.round(match.match_score * 100);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2 }}
     >
-      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
-        <CardContent className="p-5">
-          <div className="flex items-start justify-between gap-4 mb-4">
+      <Card className="border-0 shadow-sm hover:shadow-md transition-all">
+        <CardContent className="p-6">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="font-semibold text-gray-900">{opportunity?.title}</h3>
-                <Badge className={`${statusColors[match.status]} border-0`}>
-                  {match.status.replace('_', ' ')}
-                </Badge>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">
+                {opportunity.title}
+              </h3>
+              <p className="text-gray-600 line-clamp-2">{opportunity.description}</p>
+            </div>
+            
+            <div className="ml-4">
+              <div className="flex flex-col items-center gap-1 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-3 border border-indigo-100">
+                <Target className="w-5 h-5 text-indigo-600" />
+                <span className="text-2xl font-bold text-indigo-600">{matchPercent}%</span>
+                <span className="text-xs text-gray-600">Match</span>
               </div>
-              
-              {/* Match Score */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex-1 max-w-xs">
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-indigo-500 to-purple-500"
-                      style={{ width: `${match.match_score * 100}%` }}
-                    />
-                  </div>
-                </div>
-                <span className="text-sm font-medium text-gray-600">
-                  {Math.round(match.match_score * 100)}% match
-                </span>
-              </div>
-
-              {/* Matched Skills */}
-              {match.matched_skills?.length > 0 && (
-                <div className="mb-2">
-                  <p className="text-xs text-gray-500 mb-1">Matched Skills:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {match.matched_skills.map((skill, i) => (
-                      <Badge key={i} variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
-                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Missing Skills */}
-              {match.missing_skills?.length > 0 && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Growth Areas:</p>
-                  <div className="flex flex-wrap gap-1">
-                    {match.missing_skills.map((skill, i) => (
-                      <Badge key={i} variant="outline" className="bg-gray-50 text-gray-600 border-gray-200 text-xs">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Trial Task Status */}
-          {opportunity?.has_trial_task && match.trial_task_status && (
-            <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-100">
-              <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium text-purple-900">
-                  Trial Task: {match.trial_task_status.replace('_', ' ')}
-                </span>
-              </div>
+          {/* Status Badge */}
+          <div className="mb-4">
+            <Badge variant="outline" className={`${status.color} gap-1.5`}>
+              <StatusIcon className="w-3 h-3" />
+              {status.label}
+            </Badge>
+          </div>
+
+          {/* Details */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <DollarSign className="w-4 h-4 text-green-600" />
+              <span>{opportunity.compensation_amount}</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Clock className="w-4 h-4 text-blue-600" />
+              <span>{opportunity.effort}</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <MapPin className="w-4 h-4 text-purple-600" />
+              <span className="capitalize">{opportunity.location_type}</span>
+            </div>
+          </div>
+
+          {/* Skills */}
+          <div className="mb-4">
+            <div className="flex flex-wrap gap-2">
+              {match.matched_skills?.map(skill => (
+                <Badge key={skill} className="bg-green-50 text-green-700 border-green-200">
+                  ✓ {skill}
+                </Badge>
+              ))}
+              {match.missing_skills?.map(skill => (
+                <Badge key={skill} variant="outline" className="text-gray-500 border-gray-300">
+                  {skill}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Trial Task Badge */}
+          {opportunity.has_trial_task && (
+            <div className="mb-4">
+              <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+                💰 Paid Trial Task Available: {opportunity.trial_task_pay}
+              </Badge>
             </div>
           )}
 
           {/* Actions */}
-          <div className="flex gap-2">
-            {match.status === 'pending' && (
-              <>
-                {userType === 'talent' && !match.talent_interested && (
-                  <Button 
-                    className="flex-1 bg-indigo-600 hover:bg-indigo-700"
-                    onClick={() => onAccept(match)}
-                  >
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    I'm Interested
-                  </Button>
-                )}
-                {userType === 'creator' && !match.creator_interested && (
-                  <Button 
-                    className="flex-1 bg-indigo-600 hover:bg-indigo-700"
-                    onClick={() => onAccept(match)}
-                  >
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Invite to Apply
-                  </Button>
-                )}
-                <Button 
-                  variant="outline"
-                  onClick={() => onDecline(match)}
-                >
-                  <XCircle className="w-4 h-4" />
-                </Button>
-              </>
-            )}
-            
-            {isMutualInterest && match.chat_unlocked && (
-              <Button 
-                className="flex-1 bg-green-600 hover:bg-green-700"
-                onClick={() => onChat(match)}
-              >
-                <MessageSquare className="w-4 h-4 mr-2" />
-                Message
-              </Button>
-            )}
-
-            {match.status === 'talent_interested' && userType === 'creator' && (
+          {match.status === 'pending' && userType === 'talent' && onAccept && onDecline && (
+            <div className="flex gap-3">
               <Button 
                 className="flex-1 bg-indigo-600 hover:bg-indigo-700"
                 onClick={() => onAccept(match)}
               >
-                Accept & Unlock Chat
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Express Interest
               </Button>
-            )}
+              <Button 
+                variant="outline"
+                onClick={() => onDecline(match)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
 
-            {match.status === 'creator_interested' && userType === 'talent' && (
-              <div className="flex-1 flex items-center gap-2 text-sm text-gray-600">
-                <Clock className="w-4 h-4" />
+          {match.chat_unlocked && onChat && (
+            <Button 
+              className="w-full bg-indigo-600 hover:bg-indigo-700 gap-2"
+              onClick={() => onChat(match)}
+            >
+              <MessageCircle className="w-4 h-4" />
+              Open Chat
+            </Button>
+          )}
+
+          {match.status === 'talent_interested' && userType === 'talent' && (
+            <div className="bg-purple-50 border border-purple-100 rounded-lg p-4 text-center">
+              <Sparkles className="w-5 h-5 text-purple-600 mx-auto mb-2" />
+              <p className="text-sm text-purple-700 font-medium">
                 Waiting for creator response...
-              </div>
-            )}
-          </div>
+              </p>
+            </div>
+          )}
+
+          {match.status === 'mutual_interest' && !match.chat_unlocked && (
+            <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-4 text-center">
+              <MessageCircle className="w-5 h-5 text-indigo-600 mx-auto mb-2" />
+              <p className="text-sm text-indigo-700 font-medium">
+                Chat unlocking...
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </motion.div>
