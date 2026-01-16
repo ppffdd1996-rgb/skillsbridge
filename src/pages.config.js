@@ -8,6 +8,7 @@ import Opportunities from './pages/Opportunities';
 import SkillPassport from './pages/SkillPassport';
 import Matches from './pages/Matches';
 import CreateOpportunity from './pages/CreateOpportunity';
+import Admin from './pages/Admin';
 import __Layout from './Layout.jsx';
 
 
@@ -22,6 +23,7 @@ export const PAGES = {
     "SkillPassport": SkillPassport,
     "Matches": Matches,
     "CreateOpportunity": CreateOpportunity,
+    "Admin": Admin,
 }
 
 export const pagesConfig = {
