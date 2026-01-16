@@ -12,6 +12,7 @@ import {
   TrendingUp, AlertCircle
 } from "lucide-react";
 import { toast } from "sonner";
+import EmployerGeneratorChat from "@/components/admin/EmployerGeneratorChat";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -238,16 +239,7 @@ export default function Admin() {
                   <p className="text-sm text-purple-700 mb-3">
                     Use AI to generate realistic employer profiles with opportunities
                   </p>
-                  <a 
-                    href={base44.agents.getWhatsAppConnectURL('employer_generator')} 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button className="bg-purple-600 hover:bg-purple-700">
-                      <Briefcase className="w-4 h-4 mr-2" />
-                      Open AI Generator (WhatsApp)
-                    </Button>
-                  </a>
+                  <EmployerGeneratorChat />
                 </div>
 
                 {/* Manual Invite */}
