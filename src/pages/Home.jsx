@@ -2,27 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, TrendingUp, Briefcase, MapPin, Zap, ArrowRight } from "lucide-react";
+import { Target, Zap, Users, TrendingUp, ArrowRight, Shield, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import JobCard from "@/components/jobs/JobCard";
-import JobFilters from "@/components/jobs/JobFilters";
-import JobDetailModal from "@/components/jobs/JobDetailModal";
+import OpportunityCard from "@/components/opportunities/OpportunityCard";
 
 export default function Home() {
   const [user, setUser] = useState(null);
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
-  const [filters, setFilters] = useState({
-    search: '',
-    location: '',
-    jobType: 'all',
-    remoteType: 'all',
-    experienceLevel: 'all'
-  });
 
   const queryClient = useQueryClient();
 
@@ -37,74 +26,18 @@ export default function Home() {
     loadUser();
   }, []);
 
-  const { data: jobs = [], isLoading: jobsLoading } = useQuery({
-    queryKey: ['jobs'],
-    queryFn: () => base44.entities.Job.filter({ status: 'active' }, '-created_date')
+  const { data: opportunities = [], isLoading } = useQuery({
+    queryKey: ['opportunities'],
+    queryFn: () => base44.entities.Opportunity.filter({ status: 'active' }, '-created_date')
   });
 
-  const { data: savedJobs = [] } = useQuery({
-    queryKey: ['savedJobs', user?.email],
-    queryFn: () => user ? base44.entities.SavedJob.filter({ user_email: user.email }) : [],
+  const { data: myMatches = [] } = useQuery({
+    queryKey: ['myMatches', user?.email],
+    queryFn: () => user ? base44.entities.Match.filter({ talent_email: user.email }) : [],
     enabled: !!user
   });
 
-  const { data: applications = [] } = useQuery({
-    queryKey: ['applications', user?.email],
-    queryFn: () => user ? base44.entities.Application.filter({ applicant_email: user.email }) : [],
-    enabled: !!user
-  });
-
-  const savedJobIds = savedJobs.map(s => s.job_id);
-  const appliedJobIds = applications.map(a => a.job_id);
-
-  const saveJobMutation = useMutation({
-    mutationFn: async (job) => {
-      const existing = savedJobs.find(s => s.job_id === job.id);
-      if (existing) {
-        await base44.entities.SavedJob.delete(existing.id);
-      } else {
-        await base44.entities.SavedJob.create({ job_id: job.id, user_email: user.email });
-      }
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['savedJobs'] })
-  });
-
-  const applyMutation = useMutation({
-    mutationFn: async ({ job, coverLetter }) => {
-      await base44.entities.Application.create({
-        job_id: job.id,
-        applicant_email: user.email,
-        cover_letter: coverLetter,
-        resume_url: user.resume_url
-      });
-      await base44.entities.Job.update(job.id, { 
-        applicants_count: (job.applicants_count || 0) + 1 
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['applications'] });
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
-      setSelectedJob(null);
-    }
-  });
-
-  const filteredJobs = jobs.filter(job => {
-    const searchMatch = !filters.search || 
-      job.title?.toLowerCase().includes(filters.search.toLowerCase()) ||
-      job.company_name?.toLowerCase().includes(filters.search.toLowerCase()) ||
-      job.skills?.some(s => s.toLowerCase().includes(filters.search.toLowerCase()));
-    
-    const locationMatch = !filters.location ||
-      job.location?.toLowerCase().includes(filters.location.toLowerCase());
-    
-    const jobTypeMatch = filters.jobType === 'all' || job.job_type === filters.jobType;
-    const remoteMatch = filters.remoteType === 'all' || job.remote_type === filters.remoteType;
-    const expMatch = filters.experienceLevel === 'all' || job.experience_level === filters.experienceLevel;
-
-    return searchMatch && locationMatch && jobTypeMatch && remoteMatch && expMatch;
-  });
-
-  const featuredJobs = jobs.slice(0, 3);
+  const matchedOpportunityIds = myMatches.map(m => m.opportunity_id);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
@@ -112,132 +45,210 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 opacity-5" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-10 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-purple-400 rounded-full blur-3xl opacity-10 translate-y-1/2" />
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 md:pt-20 md:pb-24">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20 md:pt-24 md:pb-28">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center max-w-3xl mx-auto"
+            className="text-center max-w-4xl mx-auto"
           >
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 tracking-tight">
-              Find Your Next
-              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent"> Dream Role</span>
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 tracking-tight">
+              Skills That
+              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent"> Matter</span>
             </h1>
-            <p className="mt-6 text-xl text-gray-600 leading-relaxed">
-              Connect with innovative companies and discover opportunities that match your skills and ambitions.
+            <p className="mt-8 text-xl md:text-2xl text-gray-600 leading-relaxed">
+              No resumes. No spam. Just verified skills matched to real opportunities.
             </p>
-          </motion.div>
-
-          {/* Search Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-10 max-w-4xl mx-auto"
-          >
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-xl shadow-gray-200/50 p-4 md:p-6 border border-gray-100">
-              <JobFilters 
-                filters={filters}
-                setFilters={setFilters}
-                showAdvanced={showAdvancedFilters}
-                setShowAdvanced={setShowAdvancedFilters}
-              />
+            
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link to={createPageUrl('SkillPassport')}>
+                <Button size="lg" className="bg-indigo-600 hover:bg-indigo-700 text-lg px-8 py-6">
+                  Build Your Skill Passport
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+              <Link to={createPageUrl('CreateOpportunity')}>
+                <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+                  Post an Opportunity
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
-          {/* Quick Stats */}
+          {/* Features */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-10 flex flex-wrap justify-center gap-6 md:gap-12"
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-20 grid md:grid-cols-3 gap-8"
           >
-            <div className="flex items-center gap-2 text-gray-600">
-              <Briefcase className="w-5 h-5 text-indigo-500" />
-              <span className="font-semibold text-gray-900">{jobs.length}</span>
-              <span>Active Jobs</span>
+            <div className="text-center p-6">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Verified Skills</h3>
+              <p className="text-gray-600">Proof-based skill validation, not just claims</p>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <TrendingUp className="w-5 h-5 text-green-500" />
-              <span className="font-semibold text-gray-900">2.5k+</span>
-              <span>Companies</span>
+            
+            <div className="text-center p-6">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mx-auto mb-4">
+                <Target className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Smart Matching</h3>
+              <p className="text-gray-600">AI-powered matches based on real capabilities</p>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Zap className="w-5 h-5 text-amber-500" />
-              <span className="font-semibold text-gray-900">48hr</span>
-              <span>Avg Response</span>
+            
+            <div className="text-center p-6">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Trial Tasks</h3>
+              <p className="text-gray-600">Get paid to prove your skills before committing</p>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Job Listings */}
+      {/* How It Works */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">How SkillBridge Works</h2>
+          <p className="text-gray-600 text-lg">A better way to connect talent with opportunity</p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-100"
+          >
+            <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg mb-4">
+              1
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">Build Your Passport</h3>
+            <p className="text-gray-600">
+              Add skills with proof - portfolios, projects, certifications. No resume needed.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-100"
+          >
+            <div className="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg mb-4">
+              2
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">Get Matched</h3>
+            <p className="text-gray-600">
+              Our system finds opportunities that match your verified skills. No searching required.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-100"
+          >
+            <div className="w-10 h-10 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-lg mb-4">
+              3
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">Connect & Work</h3>
+            <p className="text-gray-600">
+              Express interest, complete trial tasks if offered, and start collaborating.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Featured Opportunities */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Latest Opportunities</h2>
-            <p className="text-gray-500 mt-1">{filteredJobs.length} jobs found</p>
+            <h2 className="text-2xl font-bold text-gray-900">Featured Opportunities</h2>
+            <p className="text-gray-500 mt-1">{opportunities.length} active opportunities</p>
           </div>
-          <Tabs defaultValue="all" className="hidden md:block">
-            <TabsList className="bg-gray-100/80">
-              <TabsTrigger value="all">All Jobs</TabsTrigger>
-              <TabsTrigger value="remote">Remote</TabsTrigger>
-              <TabsTrigger value="hybrid">Hybrid</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {user && (
+            <Link to={createPageUrl('Matches')}>
+              <Button variant="outline">
+                View My Matches
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          )}
         </div>
 
-        {jobsLoading ? (
-          <div className="grid gap-4">
-            {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-40 rounded-xl" />
+        {isLoading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-64 rounded-xl" />
             ))}
           </div>
-        ) : filteredJobs.length > 0 ? (
-          <div className="grid gap-4">
-            {filteredJobs.map((job, i) => (
+        ) : opportunities.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {opportunities.slice(0, 6).map((opp, i) => (
               <motion.div
-                key={job.id}
+                key={opp.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
               >
-                <JobCard
-                  job={job}
-                  onClick={() => setSelectedJob(job)}
-                  onSave={(j) => user ? saveJobMutation.mutate(j) : base44.auth.redirectToLogin()}
-                  isSaved={savedJobIds.includes(job.id)}
+                <OpportunityCard
+                  opportunity={opp}
+                  onClick={() => window.location.href = createPageUrl('Opportunities')}
                 />
               </motion.div>
             ))}
           </div>
         ) : (
           <div className="text-center py-16 bg-white/60 rounded-2xl border border-gray-100">
-            <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900">No jobs found</h3>
-            <p className="text-gray-500 mt-1">Try adjusting your search filters</p>
+            <Target className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900">No opportunities yet</h3>
+            <p className="text-gray-500 mt-1">Be the first to create one!</p>
+          </div>
+        )}
+
+        {opportunities.length > 6 && (
+          <div className="mt-8 text-center">
+            <Link to={createPageUrl('Opportunities')}>
+              <Button size="lg" variant="outline">
+                View All Opportunities
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
           </div>
         )}
       </section>
 
-      {/* Job Detail Modal */}
-      <JobDetailModal
-        job={selectedJob}
-        open={!!selectedJob}
-        onClose={() => setSelectedJob(null)}
-        onApply={(job, coverLetter) => {
-          if (!user) {
-            base44.auth.redirectToLogin();
-            return;
-          }
-          applyMutation.mutate({ job, coverLetter });
-        }}
-        onSave={(j) => user ? saveJobMutation.mutate(j) : base44.auth.redirectToLogin()}
-        isSaved={selectedJob ? savedJobIds.includes(selectedJob.id) : false}
-        hasApplied={selectedJob ? appliedJobIds.includes(selectedJob.id) : false}
-      />
+      {/* Stats */}
+      <section className="bg-white/80 backdrop-blur-sm border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-indigo-600 mb-2">{opportunities.length}</div>
+              <div className="text-gray-600">Active Opportunities</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-purple-600 mb-2">95%</div>
+              <div className="text-gray-600">Match Accuracy</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-pink-600 mb-2">48hr</div>
+              <div className="text-gray-600">Avg Response Time</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-emerald-600 mb-2">Zero</div>
+              <div className="text-gray-600">Spam Messages</div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
