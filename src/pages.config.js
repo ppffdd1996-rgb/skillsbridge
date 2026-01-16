@@ -4,6 +4,7 @@ import EditProfile from './pages/EditProfile';
 import PostJob from './pages/PostJob';
 import MyJobs from './pages/MyJobs';
 import Companies from './pages/Companies';
+import Opportunities from './pages/Opportunities';
 import __Layout from './Layout.jsx';
 
 
@@ -14,6 +15,7 @@ export const PAGES = {
     "PostJob": PostJob,
     "MyJobs": MyJobs,
     "Companies": Companies,
+    "Opportunities": Opportunities,
 }
 
 export const pagesConfig = {
