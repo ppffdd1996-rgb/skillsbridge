@@ -9,6 +9,7 @@ import SkillPassport from './pages/SkillPassport';
 import Matches from './pages/Matches';
 import CreateOpportunity from './pages/CreateOpportunity';
 import Admin from './pages/Admin';
+import Discover from './pages/Discover';
 import __Layout from './Layout.jsx';
 
 
@@ -24,6 +25,7 @@ export const PAGES = {
     "Matches": Matches,
     "CreateOpportunity": CreateOpportunity,
     "Admin": Admin,
+    "Discover": Discover,
 }
 
 export const pagesConfig = {

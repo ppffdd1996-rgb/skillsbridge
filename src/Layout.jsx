@@ -38,7 +38,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navLinks = [
-    { name: 'Home', page: 'Home', icon: Home },
+    { name: 'Discover', page: 'Discover', icon: Target, authRequired: true },
     { name: 'Search', page: 'Opportunities', icon: Search },
     { name: 'Matches', page: 'Matches', icon: Users, authRequired: true },
   ];
