@@ -1,31 +1,31 @@
-import Home from './pages/Home';
-import Profile from './pages/Profile';
-import EditProfile from './pages/EditProfile';
-import PostJob from './pages/PostJob';
-import MyJobs from './pages/MyJobs';
-import Companies from './pages/Companies';
-import Opportunities from './pages/Opportunities';
-import SkillPassport from './pages/SkillPassport';
-import Matches from './pages/Matches';
-import CreateOpportunity from './pages/CreateOpportunity';
 import Admin from './pages/Admin';
+import Companies from './pages/Companies';
+import CreateOpportunity from './pages/CreateOpportunity';
 import Discover from './pages/Discover';
+import EditProfile from './pages/EditProfile';
+import Home from './pages/Home';
+import Matches from './pages/Matches';
+import MyJobs from './pages/MyJobs';
+import Opportunities from './pages/Opportunities';
+import PostJob from './pages/PostJob';
+import Profile from './pages/Profile';
+import SkillPassport from './pages/SkillPassport';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "Profile": Profile,
-    "EditProfile": EditProfile,
-    "PostJob": PostJob,
-    "MyJobs": MyJobs,
-    "Companies": Companies,
-    "Opportunities": Opportunities,
-    "SkillPassport": SkillPassport,
-    "Matches": Matches,
-    "CreateOpportunity": CreateOpportunity,
     "Admin": Admin,
+    "Companies": Companies,
+    "CreateOpportunity": CreateOpportunity,
     "Discover": Discover,
+    "EditProfile": EditProfile,
+    "Home": Home,
+    "Matches": Matches,
+    "MyJobs": MyJobs,
+    "Opportunities": Opportunities,
+    "PostJob": PostJob,
+    "Profile": Profile,
+    "SkillPassport": SkillPassport,
 }
 
 export const pagesConfig = {

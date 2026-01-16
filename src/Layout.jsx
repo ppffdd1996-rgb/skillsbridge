@@ -139,6 +139,14 @@ export default function Layout({ children, currentPageName }) {
                         My Matches
                       </DropdownMenuItem>
                     </Link>
+                    {user.role === 'admin' && (
+                      <Link to={createPageUrl('Admin')}>
+                        <DropdownMenuItem>
+                          <Shield className="w-4 h-4 mr-2" />
+                          Admin Dashboard
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
                       className="text-red-600"

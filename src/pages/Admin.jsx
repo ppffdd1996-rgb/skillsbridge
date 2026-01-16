@@ -1,288 +1,414 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Flag, DollarSign, Activity, Users, Target, AlertTriangle, CheckCircle2 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Shield, Users, Target, Flag, Mail, 
+  UserPlus, Briefcase, CheckCircle, XCircle,
+  TrendingUp, AlertCircle
+} from "lucide-react";
+import { toast } from "sonner";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [newEmployerEmail, setNewEmployerEmail] = useState('');
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const loadUser = async () => {
       const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const u = await base44.auth.me();
-        setUser(u);
+      if (!isAuth) {
+        base44.auth.redirectToLogin();
+        return;
       }
+      const u = await base44.auth.me();
+      if (u.role !== 'admin') {
+        window.location.href = '/';
+        return;
+      }
+      setUser(u);
+      setLoading(false);
     };
     loadUser();
   }, []);
 
-  const queryClient = useQueryClient();
-
-  const { data: flags = [], isLoading: flagsLoading } = useQuery({
-    queryKey: ['flags'],
-    queryFn: () => base44.entities.Flag.list('-created_date'),
-    enabled: !!user && user.role === 'admin'
+  const { data: allUsers = [] } = useQuery({
+    queryKey: ['allUsers'],
+    queryFn: () => base44.entities.User.list(),
+    enabled: !!user
   });
 
   const { data: opportunities = [] } = useQuery({
     queryKey: ['allOpportunities'],
-    queryFn: () => base44.entities.Opportunity.list('-created_date'),
-    enabled: !!user && user.role === 'admin'
+    queryFn: () => base44.entities.Opportunity.list(),
+    enabled: !!user
   });
 
   const { data: matches = [] } = useQuery({
     queryKey: ['allMatches'],
     queryFn: () => base44.entities.Match.list(),
-    enabled: !!user && user.role === 'admin'
+    enabled: !!user
   });
 
-  const { data: payments = [] } = useQuery({
-    queryKey: ['payments'],
-    queryFn: () => base44.entities.Payment.list('-created_date'),
-    enabled: !!user && user.role === 'admin'
+  const { data: flags = [] } = useQuery({
+    queryKey: ['allFlags'],
+    queryFn: () => base44.entities.Flag.list(),
+    enabled: !!user
   });
+
+  const inviteEmployerMutation = useMutation({
+    mutationFn: async (email) => {
+      await base44.users.inviteUser(email, "user");
+    },
+    onSuccess: () => {
+      toast.success("Employer invited successfully!");
+      setNewEmployerEmail('');
+      queryClient.invalidateQueries({ queryKey: ['allUsers'] });
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to invite employer");
+    }
+  });
+
+  const createTestEmployers = async () => {
+    const testEmployers = [
+      'employer1@techstartup.com',
+      'employer2@creativeco.com',
+      'employer3@enterprise.com',
+      'employer4@agency.com',
+      'employer5@consulting.com'
+    ];
+
+    for (const email of testEmployers) {
+      try {
+        await base44.users.inviteUser(email, "user");
+      } catch (error) {
+        console.log(`Skipping ${email}:`, error.message);
+      }
+    }
+    
+    toast.success("Test employers invited! They'll receive email invitations.");
+    queryClient.invalidateQueries({ queryKey: ['allUsers'] });
+  };
 
   const resolveFlagMutation = useMutation({
-    mutationFn: ({ flagId, resolution }) => 
+    mutationFn: ({ flagId, status, notes }) => 
       base44.entities.Flag.update(flagId, {
-        status: 'resolved',
+        status,
         reviewed_by: user.email,
-        resolution_notes: resolution
+        resolution_notes: notes
       }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['flags'] })
+    onSuccess: () => {
+      toast.success("Flag resolved");
+      queryClient.invalidateQueries({ queryKey: ['allFlags'] });
+    }
   });
 
-  if (!user) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Card>
-          <CardContent className="p-8 text-center">
-            <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 mb-4">Admin access required</p>
-            <Button onClick={() => base44.auth.redirectToLogin()}>Sign In</Button>
-          </CardContent>
-        </Card>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
 
-  if (user.role !== 'admin') {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="max-w-md">
-          <CardContent className="p-8 text-center">
-            <Shield className="w-12 h-12 text-red-400 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
-            <p className="text-gray-600">This page is for administrators only.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const pendingFlags = flags.filter(f => f.status === 'pending');
-  const activeOpportunities = opportunities.filter(o => o.status === 'active');
-  const completedMatches = matches.filter(m => m.status === 'completed');
+  const stats = {
+    totalUsers: allUsers.length,
+    totalOpportunities: opportunities.length,
+    activeMatches: matches.filter(m => m.status === 'mutual_interest').length,
+    pendingFlags: flags.filter(f => f.status === 'pending').length
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
-      <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-500 mt-1">Platform oversight and moderation</p>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <Shield className="w-8 h-8 text-indigo-600" />
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+          </div>
+          <p className="text-gray-600">Platform management and overview</p>
         </div>
 
         {/* Stats */}
-        <div className="grid md:grid-cols-4 gap-4">
-          <Card className="border-0 shadow-sm">
+        <div className="grid md:grid-cols-4 gap-4 mb-8">
+          <Card>
             <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center">
-                  <Flag className="w-6 h-6 text-red-600" />
-                </div>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{pendingFlags.length}</p>
-                  <p className="text-sm text-gray-500">Pending Flags</p>
+                  <p className="text-sm text-gray-600 mb-1">Total Users</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.totalUsers}</p>
                 </div>
+                <Users className="w-8 h-8 text-blue-600" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm">
+          <Card>
             <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                  <Target className="w-6 h-6 text-blue-600" />
-                </div>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{activeOpportunities.length}</p>
-                  <p className="text-sm text-gray-500">Active Opportunities</p>
+                  <p className="text-sm text-gray-600 mb-1">Opportunities</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.totalOpportunities}</p>
                 </div>
+                <Target className="w-8 h-8 text-green-600" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm">
+          <Card>
             <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
-                  <Users className="w-6 h-6 text-green-600" />
-                </div>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{completedMatches.length}</p>
-                  <p className="text-sm text-gray-500">Completed Matches</p>
+                  <p className="text-sm text-gray-600 mb-1">Active Matches</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.activeMatches}</p>
                 </div>
+                <TrendingUp className="w-8 h-8 text-purple-600" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm">
+          <Card>
             <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-                  <DollarSign className="w-6 h-6 text-purple-600" />
-                </div>
+              <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">{payments.length}</p>
-                  <p className="text-sm text-gray-500">Total Payments</p>
+                  <p className="text-sm text-gray-600 mb-1">Pending Flags</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.pendingFlags}</p>
                 </div>
+                <Flag className="w-8 h-8 text-red-600" />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Tabs */}
-        <Tabs defaultValue="flags" className="w-full">
-          <TabsList className="w-full justify-start">
-            <TabsTrigger value="flags">
-              <Flag className="w-4 h-4 mr-2" />
-              Flags ({pendingFlags.length})
+        {/* Main Content */}
+        <Tabs defaultValue="employers" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="employers">
+              <Briefcase className="w-4 h-4 mr-2" />
+              Employers
+            </TabsTrigger>
+            <TabsTrigger value="users">
+              <Users className="w-4 h-4 mr-2" />
+              Users
             </TabsTrigger>
             <TabsTrigger value="opportunities">
               <Target className="w-4 h-4 mr-2" />
               Opportunities
             </TabsTrigger>
-            <TabsTrigger value="payments">
-              <DollarSign className="w-4 h-4 mr-2" />
-              Payments
+            <TabsTrigger value="flags">
+              <Flag className="w-4 h-4 mr-2" />
+              Flags
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="flags" className="mt-6 space-y-4">
-            {flagsLoading ? (
-              [...Array(3)].map((_, i) => <Skeleton key={i} className="h-32" />)
-            ) : flags.length > 0 ? (
-              flags.map(flag => (
-                <Card key={flag.id} className="border-0 shadow-sm">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <Badge variant="outline" className={
-                            flag.status === 'pending' ? 'bg-red-50 text-red-700 border-red-200' :
-                            flag.status === 'resolved' ? 'bg-green-50 text-green-700 border-green-200' :
-                            'bg-gray-50 text-gray-700 border-gray-200'
-                          }>
-                            {flag.status}
+          {/* Employers Tab */}
+          <TabsContent value="employers">
+            <Card>
+              <CardHeader>
+                <CardTitle>Employer Management</CardTitle>
+                <CardDescription>Invite and manage employer accounts</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Quick Create Test Employers */}
+                <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+                  <h3 className="font-semibold text-indigo-900 mb-2">Quick Setup</h3>
+                  <p className="text-sm text-indigo-700 mb-3">
+                    Create 5 test employer accounts instantly for testing
+                  </p>
+                  <Button 
+                    onClick={createTestEmployers}
+                    className="bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Create Test Employers
+                  </Button>
+                </div>
+
+                {/* Manual Invite */}
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Invite Individual Employer</h3>
+                  <div className="flex gap-3">
+                    <Input
+                      type="email"
+                      placeholder="employer@company.com"
+                      value={newEmployerEmail}
+                      onChange={(e) => setNewEmployerEmail(e.target.value)}
+                    />
+                    <Button 
+                      onClick={() => inviteEmployerMutation.mutate(newEmployerEmail)}
+                      disabled={!newEmployerEmail || inviteEmployerMutation.isPending}
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Invite
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Employers List */}
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">All Users</h3>
+                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                    {allUsers.map(user => (
+                      <div key={user.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div>
+                          <p className="font-medium text-gray-900">{user.full_name || user.email}</p>
+                          <p className="text-sm text-gray-500">{user.email}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                            {user.role}
                           </Badge>
-                          <Badge variant="outline">{flag.target_type}</Badge>
-                          <Badge variant="outline">{flag.reason}</Badge>
+                          {user.verified_talent && (
+                            <Badge className="bg-green-100 text-green-700">
+                              Verified
+                            </Badge>
+                          )}
                         </div>
-                        <p className="text-gray-700 mb-2">{flag.description}</p>
-                        <p className="text-sm text-gray-500">
-                          Reported by {flag.reporter_email} • {new Date(flag.created_date).toLocaleDateString()}
-                        </p>
-                        {flag.resolution_notes && (
-                          <div className="mt-3 p-3 bg-green-50 rounded-lg border border-green-100">
-                            <p className="text-sm text-green-800">
-                              <strong>Resolution:</strong> {flag.resolution_notes}
-                            </p>
-                          </div>
-                        )}
                       </div>
-                      {flag.status === 'pending' && (
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => resolveFlagMutation.mutate({ 
-                              flagId: flag.id, 
-                              resolution: 'Investigated and addressed' 
-                            })}
-                          >
-                            <CheckCircle2 className="w-4 h-4 mr-2" />
-                            Resolve
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <Card className="border-0 bg-white/60">
-                <CardContent className="p-12 text-center">
-                  <Flag className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900">No flags</h3>
-                  <p className="text-gray-500">All reports have been handled</p>
-                </CardContent>
-              </Card>
-            )}
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
-          <TabsContent value="opportunities" className="mt-6 space-y-4">
-            {opportunities.map(opp => (
-              <Card key={opp.id} className="border-0 shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">{opp.title}</h3>
-                      <p className="text-gray-600 mb-2">{opp.description}</p>
-                      <div className="flex items-center gap-3 text-sm">
-                        <Badge variant="outline" className={
-                          opp.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-gray-50'
-                        }>
+          {/* Users Tab */}
+          <TabsContent value="users">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Management</CardTitle>
+                <CardDescription>View and manage all platform users</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {allUsers.map(user => (
+                    <div key={user.id} className="p-4 border rounded-lg">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="font-semibold text-gray-900">{user.full_name || 'No name'}</p>
+                          <p className="text-sm text-gray-600">{user.email}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Joined: {new Date(user.created_date).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                            {user.role}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Opportunities Tab */}
+          <TabsContent value="opportunities">
+            <Card>
+              <CardHeader>
+                <CardTitle>Opportunities Overview</CardTitle>
+                <CardDescription>All posted opportunities on the platform</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {opportunities.map(opp => (
+                    <div key={opp.id} className="p-4 border rounded-lg">
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="font-semibold text-gray-900">{opp.title}</h3>
+                        <Badge variant={opp.status === 'active' ? 'default' : 'secondary'}>
                           {opp.status}
                         </Badge>
-                        <span className="text-gray-500">{opp.compensation_amount}</span>
-                        <span className="text-gray-500">by {opp.creator_id}</span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">{opp.description}</p>
+                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                        <span>By: {opp.creator_id}</span>
+                        <span>•</span>
+                        <span>{opp.effort}</span>
+                        <span>•</span>
+                        <span>{opp.compensation_amount}</span>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
-          <TabsContent value="payments" className="mt-6 space-y-4">
-            {payments.map(payment => (
-              <Card key={payment.id} className="border-0 shadow-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        ${(payment.amount / 100).toFixed(2)} {payment.currency}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {payment.payment_type} • {payment.payer_email}
-                      </p>
+          {/* Flags Tab */}
+          <TabsContent value="flags">
+            <Card>
+              <CardHeader>
+                <CardTitle>Content Moderation</CardTitle>
+                <CardDescription>Review and resolve flagged content</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {flags.filter(f => f.status === 'pending').map(flag => (
+                    <div key={flag.id} className="p-4 border-2 border-red-200 rounded-lg bg-red-50">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <p className="font-semibold text-gray-900">
+                            {flag.target_type}: {flag.target_id}
+                          </p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Reason: {flag.reason}
+                          </p>
+                          {flag.description && (
+                            <p className="text-sm text-gray-500 mt-1">{flag.description}</p>
+                          )}
+                          <p className="text-xs text-gray-500 mt-2">
+                            Reported by: {flag.reporter_email}
+                          </p>
+                        </div>
+                        <Badge variant="destructive">{flag.status}</Badge>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => resolveFlagMutation.mutate({
+                            flagId: flag.id,
+                            status: 'resolved',
+                            notes: 'Content removed'
+                          })}
+                        >
+                          <CheckCircle className="w-4 h-4 mr-1" />
+                          Resolve
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => resolveFlagMutation.mutate({
+                            flagId: flag.id,
+                            status: 'dismissed',
+                            notes: 'No action needed'
+                          })}
+                        >
+                          <XCircle className="w-4 h-4 mr-1" />
+                          Dismiss
+                        </Button>
+                      </div>
                     </div>
-                    <Badge variant="outline" className={
-                      payment.status === 'completed' ? 'bg-green-50 text-green-700 border-green-200' :
-                      payment.status === 'failed' ? 'bg-red-50 text-red-700 border-red-200' :
-                      'bg-blue-50 text-blue-700 border-blue-200'
-                    }>
-                      {payment.status}
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  ))}
+                  {flags.filter(f => f.status === 'pending').length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      <AlertCircle className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                      <p>No pending flags</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
