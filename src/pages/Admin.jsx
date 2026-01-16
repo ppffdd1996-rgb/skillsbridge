@@ -232,6 +232,24 @@ export default function Admin() {
                   </Button>
                 </div>
 
+                {/* AI Employer Generator */}
+                <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                  <h3 className="font-semibold text-purple-900 mb-2">AI Employer Generator</h3>
+                  <p className="text-sm text-purple-700 mb-3">
+                    Use AI to generate realistic employer profiles with opportunities
+                  </p>
+                  <a 
+                    href={base44.agents.getWhatsAppConnectURL('employer_generator')} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button className="bg-purple-600 hover:bg-purple-700">
+                      <Briefcase className="w-4 h-4 mr-2" />
+                      Open AI Generator (WhatsApp)
+                    </Button>
+                  </a>
+                </div>
+
                 {/* Manual Invite */}
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3">Invite Individual Employer</h3>
