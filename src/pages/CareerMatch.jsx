@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft, Save, Search, History, Share2, Check, Clock } from "lucide-react";
+import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft, Save, Search, History, Share2, Check, Clock, ChevronDown, ChevronUp, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -183,6 +183,7 @@ export default function CareerMatch() {
   const [saving, setSaving] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [expandedCareer, setExpandedCareer] = useState(null);
   const navigate = useNavigate();
 
   const currentQuestion = QUESTIONS[currentStep];
@@ -510,62 +511,181 @@ Be very specific with career titles and provide realistic, well-justified match 
                           View History
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
                         <DialogHeader>
-                          <DialogTitle>Your Career Assessment History</DialogTitle>
+                          <div className="flex items-center justify-between">
+                            <DialogTitle className="text-xl">Your Career Assessment History</DialogTitle>
+                            {user.career_assessment_results && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  const text = user.career_assessment_results.map((c, i) => 
+                                    `${i + 1}. ${c.title} - ${c.match_percentage}% match\n${c.explanation}\n`
+                                  ).join('\n');
+                                  navigator.clipboard.writeText(text);
+                                  toast.success('Results copied!');
+                                }}
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Export
+                              </Button>
+                            )}
+                          </div>
                         </DialogHeader>
                         <div className="space-y-4 py-4">
                           {user.career_assessment_results && (
                             <div>
-                              <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-semibold text-gray-900">
-                                  Latest Assessment
-                                </h3>
-                                {user.career_assessment_date && (
-                                  <Badge variant="outline" className="text-xs">
-                                    {new Date(user.career_assessment_date).toLocaleDateString()}
-                                  </Badge>
-                                )}
+                              <div className="flex items-center gap-3 mb-4 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-200">
+                                <Clock className="w-5 h-5 text-purple-600" />
+                                <div>
+                                  <p className="font-medium text-gray-900">Latest Assessment</p>
+                                  <p className="text-sm text-gray-600">
+                                    Completed {new Date(user.career_assessment_date).toLocaleDateString('en-US', { 
+                                      month: 'long', 
+                                      day: 'numeric', 
+                                      year: 'numeric',
+                                      hour: '2-digit',
+                                      minute: '2-digit'
+                                    })}
+                                  </p>
+                                </div>
                               </div>
-                              <div className="space-y-2">
-                                {user.career_assessment_results.slice(0, 10).map((career, idx) => (
+                              
+                              <div className="space-y-3">
+                                {user.career_assessment_results.map((career, idx) => (
                                   <div 
                                     key={idx}
-                                    className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                                    onClick={() => {
-                                      searchCareer(career.title);
-                                      setShowHistory(false);
-                                    }}
+                                    className="border rounded-lg overflow-hidden hover:shadow-md transition-all"
                                   >
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                          <Badge className="text-xs">#{idx + 1}</Badge>
-                                          <span className="font-medium text-gray-900">{career.title}</span>
+                                    <div 
+                                      className="p-4 bg-white cursor-pointer"
+                                      onClick={() => setExpandedCareer(expandedCareer === idx ? null : idx)}
+                                    >
+                                      <div className="flex items-start justify-between gap-3">
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex items-center gap-2 mb-2">
+                                            <Badge className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs">
+                                              #{idx + 1}
+                                            </Badge>
+                                            <h3 className="font-semibold text-gray-900 text-base truncate">
+                                              {career.title}
+                                            </h3>
+                                          </div>
+                                          
+                                          <div className="flex items-center gap-3 mb-2">
+                                            <div className="flex items-center gap-1">
+                                              <TrendingUp className="w-4 h-4 text-green-600" />
+                                              <span className="text-lg font-bold text-gray-900">
+                                                {career.match_percentage}%
+                                              </span>
+                                              <span className="text-xs text-gray-500">match</span>
+                                            </div>
+                                            <Progress value={career.match_percentage} className="h-2 flex-1 max-w-[200px]" />
+                                          </div>
+                                          
+                                          {expandedCareer !== idx && (
+                                            <p className="text-sm text-gray-600 line-clamp-2">
+                                              {career.explanation}
+                                            </p>
+                                          )}
                                         </div>
-                                        <Progress value={career.match_percentage} className="h-1.5 mb-1" />
-                                        <span className="text-xs text-gray-500">{career.match_percentage}% match</span>
+                                        
+                                        <div className="flex flex-col gap-2 items-end">
+                                          <Button
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              searchCareer(career.title);
+                                              setShowHistory(false);
+                                            }}
+                                            className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                          >
+                                            <Search className="w-4 h-4 mr-1" />
+                                            Search Jobs
+                                          </Button>
+                                          {expandedCareer === idx ? (
+                                            <ChevronUp className="w-5 h-5 text-gray-400" />
+                                          ) : (
+                                            <ChevronDown className="w-5 h-5 text-gray-400" />
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
+                                    
+                                    {expandedCareer === idx && (
+                                      <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="border-t bg-gray-50 p-4"
+                                      >
+                                        <div className="space-y-4">
+                                          <div>
+                                            <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                                              <Award className="w-4 h-4 text-purple-600" />
+                                              Why This Career Fits You
+                                            </h4>
+                                            <p className="text-sm text-gray-700 leading-relaxed">
+                                              {career.explanation}
+                                            </p>
+                                          </div>
+                                          
+                                          {career.skills_to_develop?.length > 0 && (
+                                            <div>
+                                              <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                                                Skills to Develop
+                                              </h4>
+                                              <div className="flex flex-wrap gap-2">
+                                                {career.skills_to_develop.map((skill, skillIdx) => (
+                                                  <Badge 
+                                                    key={skillIdx} 
+                                                    variant="outline" 
+                                                    className="text-xs bg-white"
+                                                  >
+                                                    {skill}
+                                                  </Badge>
+                                                ))}
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </motion.div>
+                                    )}
                                   </div>
                                 ))}
                               </div>
-                              <Button 
-                                className="w-full mt-4"
-                                variant="outline"
-                                onClick={() => {
-                                  setResults(user.career_assessment_results);
-                                  setShowHistory(false);
-                                }}
-                              >
-                                Load These Results
-                              </Button>
+                              
+                              <div className="flex gap-2 mt-4 pt-4 border-t">
+                                <Button 
+                                  className="flex-1"
+                                  onClick={() => {
+                                    setResults(user.career_assessment_results);
+                                    setShowHistory(false);
+                                  }}
+                                >
+                                  View Full Results Page
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => {
+                                    setResults(null);
+                                    setAnswers({});
+                                    setCurrentStep(0);
+                                    setShowHistory(false);
+                                  }}
+                                >
+                                  Retake Assessment
+                                </Button>
+                              </div>
                             </div>
                           )}
                           {!user.career_assessment_results && (
-                            <div className="text-center py-8 text-gray-500">
-                              <History className="w-12 h-12 mx-auto mb-2 text-gray-300" />
-                              <p>No saved assessments yet</p>
+                            <div className="text-center py-12 text-gray-500">
+                              <History className="w-16 h-16 mx-auto mb-3 text-gray-300" />
+                              <p className="text-lg font-medium text-gray-700 mb-1">No saved assessments yet</p>
+                              <p className="text-sm text-gray-500">Complete the career assessment to see your results here</p>
                             </div>
                           )}
                         </div>
