@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { 
   Target, User, LogOut, Menu, X, Shield,
-  Home, Search, PlusCircle, Users, ChevronDown
+  Home, Search, PlusCircle, Users, ChevronDown, Sparkles
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -41,6 +41,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Discover', page: 'Discover', icon: Target, authRequired: true },
     { name: 'Search', page: 'Opportunities', icon: Search },
     { name: 'Matches', page: 'Matches', icon: Users, authRequired: true },
+    { name: 'Career Match', page: 'CareerMatch', icon: Sparkles },
   ];
 
   const userLinks = user ? [
