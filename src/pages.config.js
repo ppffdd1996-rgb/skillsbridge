@@ -10,6 +10,7 @@ import Opportunities from './pages/Opportunities';
 import PostJob from './pages/PostJob';
 import Profile from './pages/Profile';
 import SkillPassport from './pages/SkillPassport';
+import CareerMatch from './pages/CareerMatch';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +27,7 @@ export const PAGES = {
     "PostJob": PostJob,
     "Profile": Profile,
     "SkillPassport": SkillPassport,
+    "CareerMatch": CareerMatch,
 }
 
 export const pagesConfig = {
