@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft, Save, Search } from "lucide-react";
+import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft, Save, Search, History, Share2, Check, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const QUESTIONS = [
   {
@@ -180,6 +181,8 @@ export default function CareerMatch() {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
   const currentQuestion = QUESTIONS[currentStep];
@@ -299,6 +302,30 @@ Be very specific with career titles and provide realistic, well-justified match 
 
   const searchCareer = (careerTitle) => {
     navigate(createPageUrl('Opportunities') + `?search=${encodeURIComponent(careerTitle)}`);
+  };
+
+  const shareResults = async () => {
+    if (!results || !user) return;
+
+    const shareText = `🎯 My Career Match Results:\n\n${results.slice(0, 5).map((career, idx) => 
+      `${idx + 1}. ${career.title} - ${career.match_percentage}% match`
+    ).join('\n')}\n\nDiscover your perfect career path at SkillsBridge!`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'My Career Match Results',
+          text: shareText
+        });
+      } else {
+        await navigator.clipboard.writeText(shareText);
+        setCopied(true);
+        toast.success('Results copied to clipboard!');
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (error) {
+      console.error('Share failed:', error);
+    }
   };
 
   const isLastQuestion = currentStep === QUESTIONS.length - 1;
@@ -432,26 +459,119 @@ Be very specific with career titles and provide realistic, well-justified match 
               </h2>
               <p className="text-gray-600 mb-4">
                 Based on your detailed survey responses
+                {user?.career_assessment_date && (
+                  <span className="block text-sm text-gray-500 mt-1">
+                    <Clock className="w-3 h-3 inline mr-1" />
+                    Last saved: {new Date(user.career_assessment_date).toLocaleDateString()}
+                  </span>
+                )}
               </p>
-              <div className="flex gap-2 justify-center">
+              <div className="flex gap-2 justify-center flex-wrap">
                 {user && (
-                  <Button
-                    onClick={() => saveResults()}
-                    disabled={saving}
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    {saving ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        Save Results
-                      </>
-                    )}
-                  </Button>
+                  <>
+                    <Button
+                      onClick={() => saveResults()}
+                      disabled={saving}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      {saving ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4 mr-2" />
+                          Save Results
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={shareResults}
+                      variant="outline"
+                      className="border-purple-300 hover:bg-purple-50"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="w-4 h-4 mr-2 text-green-600" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Share2 className="w-4 h-4 mr-2" />
+                          Share
+                        </>
+                      )}
+                    </Button>
+                    <Dialog open={showHistory} onOpenChange={setShowHistory}>
+                      <DialogTrigger asChild>
+                        <Button variant="outline">
+                          <History className="w-4 h-4 mr-2" />
+                          View History
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle>Your Career Assessment History</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          {user.career_assessment_results && (
+                            <div>
+                              <div className="flex items-center justify-between mb-3">
+                                <h3 className="font-semibold text-gray-900">
+                                  Latest Assessment
+                                </h3>
+                                {user.career_assessment_date && (
+                                  <Badge variant="outline" className="text-xs">
+                                    {new Date(user.career_assessment_date).toLocaleDateString()}
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="space-y-2">
+                                {user.career_assessment_results.slice(0, 10).map((career, idx) => (
+                                  <div 
+                                    key={idx}
+                                    className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                                    onClick={() => {
+                                      searchCareer(career.title);
+                                      setShowHistory(false);
+                                    }}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <Badge className="text-xs">#{idx + 1}</Badge>
+                                          <span className="font-medium text-gray-900">{career.title}</span>
+                                        </div>
+                                        <Progress value={career.match_percentage} className="h-1.5 mb-1" />
+                                        <span className="text-xs text-gray-500">{career.match_percentage}% match</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                              <Button 
+                                className="w-full mt-4"
+                                variant="outline"
+                                onClick={() => {
+                                  setResults(user.career_assessment_results);
+                                  setShowHistory(false);
+                                }}
+                              >
+                                Load These Results
+                              </Button>
+                            </div>
+                          )}
+                          {!user.career_assessment_results && (
+                            <div className="text-center py-8 text-gray-500">
+                              <History className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                              <p>No saved assessments yet</p>
+                            </div>
+                          )}
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </>
                 )}
                 <Button
                   variant="outline"
