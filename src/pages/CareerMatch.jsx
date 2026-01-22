@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft } from "lucide-react";
+import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft, Save, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { toast } from 'sonner';
 
 const QUESTIONS = [
   {
@@ -175,9 +178,28 @@ export default function CareerMatch() {
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
   const currentQuestion = QUESTIONS[currentStep];
   const progress = ((currentStep + 1) / QUESTIONS.length) * 100;
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const userData = await base44.auth.me();
+        setUser(userData);
+        
+        // Load saved results if available
+        if (userData.career_assessment_results) {
+          setResults(userData.career_assessment_results);
+        }
+      }
+    };
+    loadUser();
+  }, []);
 
   const handleAnswer = (option) => {
     setAnswers(prev => ({ ...prev, [currentQuestion.id]: option }));
@@ -241,11 +263,42 @@ Be very specific with career titles and provide realistic, well-justified match 
       });
 
       setResults(response.careers);
+      
+      // Auto-save if user is logged in
+      if (user) {
+        await saveResults(response.careers);
+      }
     } catch (error) {
       console.error('Failed to generate career matches:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const saveResults = async (resultsToSave = results) => {
+    if (!user) {
+      toast.error('Please sign in to save your results');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await base44.auth.updateMe({
+        career_assessment_results: resultsToSave,
+        career_assessment_answers: answers,
+        career_assessment_date: new Date().toISOString()
+      });
+      toast.success('Career assessment saved to your profile!');
+    } catch (error) {
+      console.error('Failed to save results:', error);
+      toast.error('Failed to save results');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const searchCareer = (careerTitle) => {
+    navigate(createPageUrl('Opportunities') + `?search=${encodeURIComponent(careerTitle)}`);
   };
 
   const isLastQuestion = currentStep === QUESTIONS.length - 1;
@@ -380,16 +433,37 @@ Be very specific with career titles and provide realistic, well-justified match 
               <p className="text-gray-600 mb-4">
                 Based on your detailed survey responses
               </p>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setResults(null);
-                  setAnswers({});
-                  setCurrentStep(0);
-                }}
-              >
-                Start Over
-              </Button>
+              <div className="flex gap-2 justify-center">
+                {user && (
+                  <Button
+                    onClick={() => saveResults()}
+                    disabled={saving}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    {saving ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Results
+                      </>
+                    )}
+                  </Button>
+                )}
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setResults(null);
+                    setAnswers({});
+                    setCurrentStep(0);
+                  }}
+                >
+                  Start Over
+                </Button>
+              </div>
             </div>
 
             <AnimatePresence>
@@ -400,7 +474,7 @@ Be very specific with career titles and provide realistic, well-justified match 
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1 }}
                 >
-                  <Card className="shadow-lg hover:shadow-xl transition-shadow">
+                  <Card className="shadow-lg hover:shadow-xl transition-all cursor-pointer group" onClick={() => searchCareer(career.title)}>
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
@@ -427,7 +501,7 @@ Be very specific with career titles and provide realistic, well-justified match 
                       <p className="text-gray-700 mb-4">{career.explanation}</p>
 
                       {career.skills_to_develop?.length > 0 && (
-                        <div>
+                        <div className="mb-4">
                           <p className="text-sm font-medium text-gray-900 mb-2">
                             Skills to develop:
                           </p>
@@ -440,6 +514,11 @@ Be very specific with career titles and provide realistic, well-justified match 
                           </div>
                         </div>
                       )}
+
+                      <div className="flex items-center gap-2 text-purple-600 text-sm font-medium group-hover:gap-3 transition-all">
+                        <Search className="w-4 h-4" />
+                        Click to search for {career.title} opportunities
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>

@@ -1,4 +1,5 @@
 import Admin from './pages/Admin';
+import CareerMatch from './pages/CareerMatch';
 import Companies from './pages/Companies';
 import CreateOpportunity from './pages/CreateOpportunity';
 import Discover from './pages/Discover';
@@ -10,12 +11,12 @@ import Opportunities from './pages/Opportunities';
 import PostJob from './pages/PostJob';
 import Profile from './pages/Profile';
 import SkillPassport from './pages/SkillPassport';
-import CareerMatch from './pages/CareerMatch';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Admin": Admin,
+    "CareerMatch": CareerMatch,
     "Companies": Companies,
     "CreateOpportunity": CreateOpportunity,
     "Discover": Discover,
@@ -27,7 +28,6 @@ export const PAGES = {
     "PostJob": PostJob,
     "Profile": Profile,
     "SkillPassport": SkillPassport,
-    "CareerMatch": CareerMatch,
 }
 
 export const pagesConfig = {
