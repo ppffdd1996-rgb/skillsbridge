@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Shield, Save, Upload } from "lucide-react";
+import PortfolioProjects from "@/components/profile/PortfolioProjects";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -22,7 +23,8 @@ export default function Profile() {
     compensation_expectation_min: '',
     compensation_expectation_max: '',
     open_to_opportunities: true,
-    anonymous_mode: false
+    anonymous_mode: false,
+    portfolio_projects: []
   });
 
   useEffect(() => {
@@ -41,7 +43,8 @@ export default function Profile() {
           compensation_expectation_min: u.compensation_expectation_min || '',
           compensation_expectation_max: u.compensation_expectation_max || '',
           open_to_opportunities: u.open_to_opportunities !== false,
-          anonymous_mode: u.anonymous_mode || false
+          anonymous_mode: u.anonymous_mode || false,
+          portfolio_projects: u.portfolio_projects || []
         });
       }
     };
@@ -237,6 +240,11 @@ export default function Profile() {
             </div>
           </CardContent>
         </Card>
+
+        <PortfolioProjects
+          projects={formData.portfolio_projects || []}
+          onUpdate={(projects) => setFormData({ ...formData, portfolio_projects: projects })}
+        />
       </div>
     </div>
   );
