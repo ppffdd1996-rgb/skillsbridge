@@ -237,7 +237,7 @@ export default function Admin() {
                 <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
                   <h3 className="font-semibold text-purple-900 mb-2">AI Employer Generator</h3>
                   <p className="text-sm text-purple-700 mb-3">
-                    Use AI to generate realistic employer profiles with opportunities
+                    Generate detailed employer profiles with AI-powered descriptions, key responsibilities, qualifications, and job title suggestions based on industry
                   </p>
                   <EmployerGeneratorChat />
                 </div>

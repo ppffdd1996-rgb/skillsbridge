@@ -44,7 +44,7 @@ export default function EmployerGeneratorChat() {
       // Send initial message
       await base44.agents.addMessage(conv, {
         role: "user",
-        content: "Hello! I need help generating realistic employer profiles with job opportunities for testing our platform."
+        content: "Hello! I need help generating comprehensive employer profiles with detailed job descriptions, key responsibilities, and qualifications for testing our platform."
       });
     } catch (error) {
       console.error('Failed to create conversation:', error);
