@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import EmployerGeneratorChat from "@/components/admin/EmployerGeneratorChat";
+import CompanyInsights from "@/components/admin/CompanyInsights";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -191,10 +192,14 @@ export default function Admin() {
 
         {/* Main Content */}
         <Tabs defaultValue="employers" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="employers">
               <Briefcase className="w-4 h-4 mr-2" />
               Employers
+            </TabsTrigger>
+            <TabsTrigger value="insights">
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Company Insights
             </TabsTrigger>
             <TabsTrigger value="users">
               <Users className="w-4 h-4 mr-2" />
@@ -288,6 +293,11 @@ export default function Admin() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Company Insights Tab */}
+          <TabsContent value="insights">
+            <CompanyInsights />
           </TabsContent>
 
           {/* Users Tab */}
