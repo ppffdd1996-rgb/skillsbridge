@@ -16,6 +16,7 @@ import {
   Home, Search, PlusCircle, Users, ChevronDown, Sparkles, ClipboardList
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
@@ -229,6 +230,9 @@ export default function Layout({ children, currentPageName }) {
           )}
         </AnimatePresence>
       </nav>
+
+      {/* Onboarding Flow */}
+      {user && <OnboardingFlow user={user} />}
 
       {/* Main Content */}
       <main>
