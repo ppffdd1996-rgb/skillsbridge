@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
+import AIChatBubble from "@/components/chat/AIChatBubble";
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
@@ -241,6 +242,9 @@ export default function Layout({ children, currentPageName }) {
       <main>
         {children}
       </main>
+
+      {/* AI Chat Bubble */}
+      <AIChatBubble />
 
       {/* Footer */}
       <footer className="bg-white border-t mt-auto">
