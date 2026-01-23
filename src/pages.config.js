@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import SkillPassport from './pages/SkillPassport';
 import Applications from './pages/Applications';
 import CandidateDashboard from './pages/CandidateDashboard';
+import RecruiterAnalytics from './pages/RecruiterAnalytics';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +33,7 @@ export const PAGES = {
     "SkillPassport": SkillPassport,
     "Applications": Applications,
     "CandidateDashboard": CandidateDashboard,
+    "RecruiterAnalytics": RecruiterAnalytics,
 }
 
 export const pagesConfig = {
