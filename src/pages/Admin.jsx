@@ -14,6 +14,7 @@ import {
 import { toast } from "sonner";
 import EmployerGeneratorChat from "@/components/admin/EmployerGeneratorChat";
 import CompanyInsights from "@/components/admin/CompanyInsights";
+import CompanyBranding from "@/components/admin/CompanyBranding";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -192,14 +193,18 @@ export default function Admin() {
 
         {/* Main Content */}
         <Tabs defaultValue="employers" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="employers">
               <Briefcase className="w-4 h-4 mr-2" />
               Employers
             </TabsTrigger>
+            <TabsTrigger value="branding">
+              <Briefcase className="w-4 h-4 mr-2" />
+              Branding
+            </TabsTrigger>
             <TabsTrigger value="insights">
               <TrendingUp className="w-4 h-4 mr-2" />
-              Company Insights
+              Insights
             </TabsTrigger>
             <TabsTrigger value="users">
               <Users className="w-4 h-4 mr-2" />
@@ -291,6 +296,19 @@ export default function Admin() {
                     ))}
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Company Branding Tab */}
+          <TabsContent value="branding">
+            <Card>
+              <CardHeader>
+                <CardTitle>Company Branding</CardTitle>
+                <CardDescription>Customize your company's visual identity with AI-powered suggestions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <CompanyBranding user={user} onUpdate={() => window.location.reload()} />
               </CardContent>
             </Card>
           </TabsContent>
