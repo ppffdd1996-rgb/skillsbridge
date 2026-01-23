@@ -7,12 +7,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { User, Shield, Save, Upload } from "lucide-react";
+import { User, Shield, Save, Upload, Zap, Eye, TrendingUp } from "lucide-react";
 import PortfolioProjects from "@/components/profile/PortfolioProjects";
+import BoostModal from "@/components/boost/BoostModal";
+import BoostBadge from "@/components/boost/BoostBadge";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [boostModalOpen, setBoostModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     user_type: 'talent',
     display_name: '',
@@ -84,11 +87,16 @@ export default function Profile() {
     );
   }
 
+  const isBoosted = user?.boosted_until && new Date(user.boosted_until) > new Date();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
       <div className="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
+            <BoostBadge boostedUntil={user?.boosted_until} />
+          </div>
           <Button 
             className="bg-indigo-600 hover:bg-indigo-700 gap-2"
             onClick={handleSave}
@@ -98,6 +106,63 @@ export default function Profile() {
             {saving ? 'Saving...' : 'Save Changes'}
           </Button>
         </div>
+
+        {/* Boost Stats Card */}
+        {isBoosted && (
+          <Card className="border-0 shadow-sm bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Zap className="w-5 h-5 text-yellow-600" />
+                    <h3 className="font-semibold text-gray-900">Profile Boost Active</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="bg-white/60 rounded-lg p-3">
+                      <div className="flex items-center gap-2 text-indigo-600 mb-1">
+                        <Eye className="w-4 h-4" />
+                        <span className="text-sm font-medium">Views</span>
+                      </div>
+                      <p className="text-2xl font-bold text-gray-900">{user.boost_impressions || 0}</p>
+                    </div>
+                    <div className="bg-white/60 rounded-lg p-3">
+                      <div className="flex items-center gap-2 text-green-600 mb-1">
+                        <TrendingUp className="w-4 h-4" />
+                        <span className="text-sm font-medium">Expires</span>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {new Date(user.boosted_until).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Your profile is being featured in search results and getting priority visibility
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {!isBoosted && (
+          <Card className="border-0 shadow-sm border-indigo-200">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">Boost Your Profile</h3>
+                  <p className="text-sm text-gray-600">Get 3-5x more visibility and priority in search results</p>
+                </div>
+                <Button
+                  onClick={() => setBoostModalOpen(true)}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Boost Now
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="border-0 shadow-sm">
           <CardHeader>
@@ -245,6 +310,16 @@ export default function Profile() {
           projects={formData.portfolio_projects || []}
           onUpdate={(projects) => setFormData({ ...formData, portfolio_projects: projects })}
         />
+
+        {boostModalOpen && (
+          <BoostModal
+            type="profile"
+            targetId={user.email}
+            targetTitle={user.display_name || user.full_name || user.email}
+            onClose={() => setBoostModalOpen(false)}
+            onBoostActivated={() => window.location.reload()}
+          />
+        )}
       </div>
     </div>
   );

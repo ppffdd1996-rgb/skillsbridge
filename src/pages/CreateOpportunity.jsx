@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Target, Plus, X, Send, ArrowLeft } from "lucide-react";
+import { Target, Plus, X, Send, ArrowLeft, Zap } from "lucide-react";
+import BoostModal from "@/components/boost/BoostModal";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -17,6 +18,8 @@ export default function CreateOpportunity() {
   const [user, setUser] = useState(null);
   const [creating, setCreating] = useState(false);
   const [skillInput, setSkillInput] = useState('');
+  const [createdOpportunityId, setCreatedOpportunityId] = useState(null);
+  const [showBoostModal, setShowBoostModal] = useState(false);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -57,7 +60,7 @@ export default function CreateOpportunity() {
 
   const handleCreate = async () => {
     setCreating(true);
-    await base44.entities.Opportunity.create({
+    const opportunity = await base44.entities.Opportunity.create({
       ...formData,
       creator_id: user.email,
       status: 'active',
@@ -69,7 +72,8 @@ export default function CreateOpportunity() {
     await base44.functions.invoke('calculateMatches', { opportunity_id: null });
 
     setCreating(false);
-    window.location.href = createPageUrl('Opportunities');
+    setCreatedOpportunityId(opportunity.id);
+    setShowBoostModal(true);
   };
 
   if (!user) {
@@ -322,6 +326,19 @@ export default function CreateOpportunity() {
             {creating ? 'Creating...' : 'Create Opportunity'}
           </Button>
         </div>
+
+        {showBoostModal && createdOpportunityId && (
+          <BoostModal
+            type="opportunity"
+            targetId={createdOpportunityId}
+            targetTitle={formData.title}
+            onClose={() => {
+              setShowBoostModal(false);
+              window.location.href = createPageUrl('Opportunities');
+            }}
+            onBoostActivated={() => window.location.href = createPageUrl('Opportunities')}
+          />
+        )}
       </div>
     </div>
   );
