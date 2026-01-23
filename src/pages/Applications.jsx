@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   Briefcase, TrendingUp, Clock, CheckCircle, XCircle, 
   UserCheck, FileText, Loader2, Sparkles, AlertCircle,
-  Calendar, ExternalLink, Award, MessageSquare, Shield
+  Calendar, ExternalLink, Award, MessageSquare, Shield, Mail
 } from "lucide-react";
 import { toast } from "sonner";
 import InterviewAssistant from "@/components/applications/InterviewAssistant";
@@ -198,13 +198,30 @@ export default function ApplicationsPage() {
 
         {/* Applications List */}
         <Tabs defaultValue="all" className="space-y-6">
-          <TabsList>
+          <div className="flex items-center justify-between mb-4">
+            <TabsList>
             <TabsTrigger value="all">All ({stats.total})</TabsTrigger>
             <TabsTrigger value="applied">New ({stats.applied})</TabsTrigger>
             <TabsTrigger value="screening">Screening ({stats.screening})</TabsTrigger>
             <TabsTrigger value="interviewing">Interviewing ({stats.interviewing})</TabsTrigger>
             <TabsTrigger value="offered">Offered ({stats.offered})</TabsTrigger>
           </TabsList>
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (sortedApplications.length === 0) {
+                toast.error('No applications to message');
+                return;
+              }
+              setSelectedAppsForMessage(sortedApplications);
+              setMessageComposerOpen(myOpportunities[0] || { id: 'general', title: 'General' });
+            }}
+            className="gap-2"
+          >
+            <Mail className="w-4 h-4" />
+            Message All ({sortedApplications.length})
+          </Button>
+          </div>
 
           {['all', 'applied', 'screening', 'interviewing', 'offered'].map(status => (
             <TabsContent key={status} value={status}>
