@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import CareerPathRecommendation from "@/components/career/CareerPathRecommendation";
 
 const QUESTIONS = [
   {
@@ -487,6 +488,7 @@ Be very specific with career titles and provide realistic, well-justified match 
                         </>
                       )}
                     </Button>
+                    <CareerPathRecommendation careerResults={results} />
                     <Button
                       onClick={shareResults}
                       variant="outline"
