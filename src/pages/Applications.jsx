@@ -11,9 +11,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   Briefcase, TrendingUp, Clock, CheckCircle, XCircle, 
   UserCheck, FileText, Loader2, Sparkles, AlertCircle,
-  Calendar, ExternalLink, Award
+  Calendar, ExternalLink, Award, MessageSquare
 } from "lucide-react";
 import { toast } from "sonner";
+import InterviewAssistant from "@/components/applications/InterviewAssistant";
 
 const STATUS_CONFIG = {
   applied: { label: 'Applied', color: 'bg-blue-100 text-blue-800', icon: FileText },
@@ -29,6 +30,7 @@ export default function ApplicationsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [recruiterNotes, setRecruiterNotes] = useState('');
+  const [interviewAssistantOpen, setInterviewAssistantOpen] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -263,6 +265,17 @@ export default function ApplicationsPage() {
                                 )}
                               </Button>
                             )}
+                            {(app.status === 'screening' || app.status === 'interviewing') && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setInterviewAssistantOpen(app)}
+                                className="gap-2 border-purple-300 hover:bg-purple-50"
+                              >
+                                <MessageSquare className="w-4 h-4" />
+                                Interview Assistant
+                              </Button>
+                            )}
                             <Dialog>
                               <DialogTrigger asChild>
                                 <Button 
@@ -438,6 +451,13 @@ export default function ApplicationsPage() {
           ))}
         </Tabs>
       </div>
+
+      {interviewAssistantOpen && (
+        <InterviewAssistant 
+          application={interviewAssistantOpen} 
+          onClose={() => setInterviewAssistantOpen(null)}
+        />
+      )}
     </div>
   );
 }
