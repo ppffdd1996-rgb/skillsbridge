@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Briefcase, Mail, Clock, TrendingUp, CheckCircle, 
-  AlertCircle, Loader2, ExternalLink, Calendar, FileText
+  AlertCircle, Loader2, ExternalLink, Calendar, FileText, Video
 } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -49,6 +49,12 @@ export default function CandidateDashboard() {
   const { data: messages = [], refetch: refetchMessages } = useQuery({
     queryKey: ['my-messages', user?.email],
     queryFn: () => base44.entities.Message.filter({ recipient_email: user.email }),
+    enabled: !!user
+  });
+
+  const { data: interviews = [] } = useQuery({
+    queryKey: ['my-interviews', user?.email],
+    queryFn: () => base44.entities.Interview.filter({ candidate_email: user.email }),
     enabled: !!user
   });
 
@@ -217,12 +223,42 @@ export default function CandidateDashboard() {
                         </div>
                       )}
 
-                      {app.interview_date && (
-                        <div className="flex items-center gap-2 text-sm text-gray-700 mb-4">
-                          <Calendar className="w-4 h-4 text-indigo-600" />
-                          Interview scheduled: {new Date(app.interview_date).toLocaleString()}
-                        </div>
-                      )}
+                      {(() => {
+                        const appInterviews = interviews.filter(i => 
+                          i.application_id === app.id && 
+                          ['scheduled', 'confirmed'].includes(i.status)
+                        );
+                        return appInterviews.length > 0 && (
+                          <div className="bg-indigo-50 border-l-4 border-indigo-500 p-3 mb-4">
+                            <div className="flex items-center gap-2 text-sm font-medium text-indigo-900 mb-2">
+                              <Calendar className="w-4 h-4" />
+                              Upcoming Interview
+                            </div>
+                            {appInterviews.map(interview => (
+                              <div key={interview.id} className="text-sm text-indigo-800 space-y-1">
+                                <p>{new Date(interview.scheduled_time).toLocaleString('en-US', {
+                                  weekday: 'long',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: 'numeric',
+                                  minute: '2-digit'
+                                })}</p>
+                                {interview.meeting_link && (
+                                  <a 
+                                    href={interview.meeting_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1 text-indigo-600 hover:text-indigo-700"
+                                  >
+                                    <Video className="w-3 h-3" />
+                                    Join Meeting
+                                  </a>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </CardContent>
                   </Card>
                 );

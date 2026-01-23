@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import InterviewAssistant from "@/components/applications/InterviewAssistant";
 import SkillValidation from "@/components/applications/SkillValidation";
 import MessageComposer from "@/components/communication/MessageComposer";
+import InterviewScheduler from "@/components/scheduling/InterviewScheduler";
 
 const STATUS_CONFIG = {
   applied: { label: 'Applied', color: 'bg-blue-100 text-blue-800', icon: FileText },
@@ -36,6 +37,7 @@ export default function ApplicationsPage() {
   const [skillValidationOpen, setSkillValidationOpen] = useState(null);
   const [messageComposerOpen, setMessageComposerOpen] = useState(null);
   const [selectedAppsForMessage, setSelectedAppsForMessage] = useState([]);
+  const [schedulerOpen, setSchedulerOpen] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -287,6 +289,17 @@ export default function ApplicationsPage() {
                                 )}
                               </Button>
                             )}
+                            {app.status === 'screening' && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setSchedulerOpen(app)}
+                                className="gap-2 border-indigo-300 hover:bg-indigo-50"
+                              >
+                                <Calendar className="w-4 h-4" />
+                                Schedule
+                              </Button>
+                            )}
                             {(app.status === 'screening' || app.status === 'interviewing') && (
                               <>
                                 <Button
@@ -509,6 +522,15 @@ export default function ApplicationsPage() {
             setSelectedAppsForMessage([]);
           }}
           onSent={() => queryClient.invalidateQueries({ queryKey: ['applications'] })}
+        />
+      )}
+
+      {schedulerOpen && (
+        <InterviewScheduler
+          application={schedulerOpen}
+          recruiter={user}
+          onClose={() => setSchedulerOpen(null)}
+          onScheduled={() => queryClient.invalidateQueries({ queryKey: ['applications'] })}
         />
       )}
     </div>
