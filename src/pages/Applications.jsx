@@ -16,6 +16,7 @@ import {
 import { toast } from "sonner";
 import InterviewAssistant from "@/components/applications/InterviewAssistant";
 import SkillValidation from "@/components/applications/SkillValidation";
+import MessageComposer from "@/components/communication/MessageComposer";
 
 const STATUS_CONFIG = {
   applied: { label: 'Applied', color: 'bg-blue-100 text-blue-800', icon: FileText },
@@ -33,6 +34,8 @@ export default function ApplicationsPage() {
   const [recruiterNotes, setRecruiterNotes] = useState('');
   const [interviewAssistantOpen, setInterviewAssistantOpen] = useState(null);
   const [skillValidationOpen, setSkillValidationOpen] = useState(null);
+  const [messageComposerOpen, setMessageComposerOpen] = useState(null);
+  const [selectedAppsForMessage, setSelectedAppsForMessage] = useState([]);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -477,6 +480,18 @@ export default function ApplicationsPage() {
           application={skillValidationOpen}
           onClose={() => setSkillValidationOpen(null)}
           onUpdate={() => queryClient.invalidateQueries({ queryKey: ['applications'] })}
+        />
+      )}
+
+      {messageComposerOpen && (
+        <MessageComposer
+          applications={selectedAppsForMessage}
+          opportunity={messageComposerOpen}
+          onClose={() => {
+            setMessageComposerOpen(null);
+            setSelectedAppsForMessage([]);
+          }}
+          onSent={() => queryClient.invalidateQueries({ queryKey: ['applications'] })}
         />
       )}
     </div>

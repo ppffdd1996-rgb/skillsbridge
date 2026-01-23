@@ -46,6 +46,7 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const userLinks = user ? [
+    { name: 'My Dashboard', page: 'CandidateDashboard', icon: User },
     { name: 'Create Opportunity', page: 'CreateOpportunity', icon: PlusCircle },
     { name: 'Applications', page: 'Applications', icon: ClipboardList },
   ] : [];
