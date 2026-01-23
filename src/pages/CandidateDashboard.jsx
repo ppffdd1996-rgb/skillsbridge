@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Briefcase, Mail, Clock, TrendingUp, CheckCircle, 
-  AlertCircle, Loader2, ExternalLink, Calendar, FileText, Video
+  AlertCircle, Loader2, ExternalLink, Calendar, FileText, Video, Zap
 } from "lucide-react";
+import BoostModal from "@/components/boost/BoostModal";
+import BoostStats from "@/components/dashboard/BoostStats";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -24,6 +26,8 @@ const STATUS_CONFIG = {
 export default function CandidateDashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [boostModalOpen, setBoostModalOpen] = useState(false);
+  const [boostTarget, setBoostTarget] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -55,6 +59,12 @@ export default function CandidateDashboard() {
   const { data: interviews = [] } = useQuery({
     queryKey: ['my-interviews', user?.email],
     queryFn: () => base44.entities.Interview.filter({ candidate_email: user.email }),
+    enabled: !!user
+  });
+
+  const { data: myOpportunities = [] } = useQuery({
+    queryKey: ['my-opportunities', user?.email],
+    queryFn: () => base44.entities.Opportunity.filter({ creator_id: user.email }),
     enabled: !!user
   });
 
@@ -134,6 +144,19 @@ export default function CandidateDashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Boost Stats for Recruiters */}
+        {myOpportunities.length > 0 && (
+          <div className="mb-8">
+            <BoostStats 
+              opportunities={myOpportunities}
+              onBoostOpportunity={(opp) => {
+                setBoostTarget({ type: 'opportunity', id: opp.id, title: opp.title });
+                setBoostModalOpen(true);
+              }}
+            />
+          </div>
+        )}
 
         <Tabs defaultValue="applications" className="space-y-6">
           <TabsList>
@@ -322,6 +345,19 @@ export default function CandidateDashboard() {
             )}
           </TabsContent>
         </Tabs>
+
+        {boostModalOpen && boostTarget && (
+          <BoostModal
+            type={boostTarget.type}
+            targetId={boostTarget.id}
+            targetTitle={boostTarget.title}
+            onClose={() => {
+              setBoostModalOpen(false);
+              setBoostTarget(null);
+            }}
+            onBoostActivated={() => window.location.reload()}
+          />
+        )}
       </div>
     </div>
   );

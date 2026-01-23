@@ -35,7 +35,17 @@ export default function Discover() {
 
   const { data: opportunities = [] } = useQuery({
     queryKey: ['opportunities'],
-    queryFn: () => base44.entities.Opportunity.list()
+    queryFn: async () => {
+      const opps = await base44.entities.Opportunity.list();
+      // Sort to prioritize boosted opportunities
+      return opps.sort((a, b) => {
+        const aBoost = a.boosted_until && new Date(a.boosted_until) > new Date();
+        const bBoost = b.boosted_until && new Date(b.boosted_until) > new Date();
+        if (aBoost && !bBoost) return -1;
+        if (!aBoost && bBoost) return 1;
+        return 0;
+      });
+    }
   });
 
   const acceptMutation = useMutation({

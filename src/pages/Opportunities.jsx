@@ -199,8 +199,16 @@ export default function Opportunities() {
     return true;
   });
 
-  // Sort opportunities
+  // Sort opportunities - boosted items appear first
   const sortedOpportunities = [...filteredOpportunities].sort((a, b) => {
+    // First, prioritize boosted opportunities
+    const aBoost = a.boosted_until && new Date(a.boosted_until) > new Date();
+    const bBoost = b.boosted_until && new Date(b.boosted_until) > new Date();
+    
+    if (aBoost && !bBoost) return -1;
+    if (!aBoost && bBoost) return 1;
+    
+    // Then apply the selected sort
     if (sortBy === 'newest') return new Date(b.created_date) - new Date(a.created_date);
     if (sortBy === 'oldest') return new Date(a.created_date) - new Date(b.created_date);
     if (sortBy === 'compensation') {
