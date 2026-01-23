@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft, Save, Search, History, Share2, Check, Clock, ChevronDown, ChevronUp, Download } from "lucide-react";
+import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft, Save, Search, History, Share2, Check, Clock, ChevronDown, ChevronUp, Download, Target } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CareerPathRecommendation from "@/components/career/CareerPathRecommendation";
+import SkillGapAnalysis from "@/components/career/SkillGapAnalysis";
 
 const QUESTIONS = [
   {
@@ -335,7 +337,20 @@ Be very specific with career titles and provide realistic, well-justified match 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
+        <Tabs defaultValue="assessment" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="assessment">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Career Assessment
+            </TabsTrigger>
+            <TabsTrigger value="skills">
+              <Target className="w-4 h-4 mr-2" />
+              Skill Gap Analysis
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="assessment">
         {!results ? (
           <>
             <div className="text-center mb-8">
@@ -768,6 +783,12 @@ Be very specific with career titles and provide realistic, well-justified match 
             </AnimatePresence>
           </div>
         )}
+          </TabsContent>
+
+          <TabsContent value="skills">
+            <SkillGapAnalysis />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
