@@ -11,10 +11,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   Briefcase, TrendingUp, Clock, CheckCircle, XCircle, 
   UserCheck, FileText, Loader2, Sparkles, AlertCircle,
-  Calendar, ExternalLink, Award, MessageSquare
+  Calendar, ExternalLink, Award, MessageSquare, Shield
 } from "lucide-react";
 import { toast } from "sonner";
 import InterviewAssistant from "@/components/applications/InterviewAssistant";
+import SkillValidation from "@/components/applications/SkillValidation";
 
 const STATUS_CONFIG = {
   applied: { label: 'Applied', color: 'bg-blue-100 text-blue-800', icon: FileText },
@@ -31,6 +32,7 @@ export default function ApplicationsPage() {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [recruiterNotes, setRecruiterNotes] = useState('');
   const [interviewAssistantOpen, setInterviewAssistantOpen] = useState(null);
+  const [skillValidationOpen, setSkillValidationOpen] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -266,15 +268,26 @@ export default function ApplicationsPage() {
                               </Button>
                             )}
                             {(app.status === 'screening' || app.status === 'interviewing') && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setInterviewAssistantOpen(app)}
-                                className="gap-2 border-purple-300 hover:bg-purple-50"
-                              >
-                                <MessageSquare className="w-4 h-4" />
-                                Interview Assistant
-                              </Button>
+                              <>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setInterviewAssistantOpen(app)}
+                                  className="gap-2 border-purple-300 hover:bg-purple-50"
+                                >
+                                  <MessageSquare className="w-4 h-4" />
+                                  Interview
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => setSkillValidationOpen(app)}
+                                  className="gap-2 border-green-300 hover:bg-green-50"
+                                >
+                                  <Shield className="w-4 h-4" />
+                                  Assess
+                                </Button>
+                              </>
                             )}
                             <Dialog>
                               <DialogTrigger asChild>
@@ -456,6 +469,14 @@ export default function ApplicationsPage() {
         <InterviewAssistant 
           application={interviewAssistantOpen} 
           onClose={() => setInterviewAssistantOpen(null)}
+        />
+      )}
+
+      {skillValidationOpen && (
+        <SkillValidation
+          application={skillValidationOpen}
+          onClose={() => setSkillValidationOpen(null)}
+          onUpdate={() => queryClient.invalidateQueries({ queryKey: ['applications'] })}
         />
       )}
     </div>
