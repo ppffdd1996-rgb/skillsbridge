@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import EmployerGeneratorChat from "@/components/admin/EmployerGeneratorChat";
 import CompanyInsights from "@/components/admin/CompanyInsights";
 import CompanyBranding from "@/components/admin/CompanyBranding";
+import TalentPoolAnalytics from "@/components/admin/TalentPoolAnalytics";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -193,7 +194,7 @@ export default function Admin() {
 
         {/* Main Content */}
         <Tabs defaultValue="employers" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="employers">
               <Briefcase className="w-4 h-4 mr-2" />
               Employers
@@ -201,6 +202,10 @@ export default function Admin() {
             <TabsTrigger value="branding">
               <Briefcase className="w-4 h-4 mr-2" />
               Branding
+            </TabsTrigger>
+            <TabsTrigger value="analytics">
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Analytics
             </TabsTrigger>
             <TabsTrigger value="insights">
               <TrendingUp className="w-4 h-4 mr-2" />
@@ -311,6 +316,11 @@ export default function Admin() {
                 <CompanyBranding user={user} onUpdate={() => window.location.reload()} />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Talent Pool Analytics Tab */}
+          <TabsContent value="analytics">
+            <TalentPoolAnalytics />
           </TabsContent>
 
           {/* Company Insights Tab */}
