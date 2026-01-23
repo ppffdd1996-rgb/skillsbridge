@@ -14,6 +14,7 @@ import PostJob from './pages/PostJob';
 import Profile from './pages/Profile';
 import RecruiterAnalytics from './pages/RecruiterAnalytics';
 import SkillPassport from './pages/SkillPassport';
+import TalentPoolDashboard from './pages/TalentPoolDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "Profile": Profile,
     "RecruiterAnalytics": RecruiterAnalytics,
     "SkillPassport": SkillPassport,
+    "TalentPoolDashboard": TalentPoolDashboard,
 }
 
 export const pagesConfig = {
