@@ -830,5 +830,6 @@ Be very specific with career titles and provide realistic, well-justified match 
         </Tabs>
       </div>
     </div>
+    </>
   );
 }
