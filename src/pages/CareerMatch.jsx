@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft, Save, Search, History, Share2, Check, Clock, ChevronDown, ChevronUp, Download, Target } from "lucide-react";
+import { Sparkles, Loader2, Award, TrendingUp, ChevronRight, ChevronLeft, Save, Search, History, Share2, Check, Clock, ChevronDown, ChevronUp, Download, Target, Printer } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -332,10 +332,40 @@ Be very specific with career titles and provide realistic, well-justified match 
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   const isLastQuestion = currentStep === QUESTIONS.length - 1;
   const canProceed = answers[currentQuestion?.id];
 
   return (
+    <>
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .print-area, .print-area * {
+            visibility: visible;
+          }
+          .print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+          }
+          .no-print {
+            display: none !important;
+          }
+          .print-card {
+            page-break-inside: avoid;
+            border: 1px solid #e5e7eb !important;
+            margin-bottom: 1rem;
+            padding: 1rem;
+          }
+        }
+      `}</style>
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <Tabs defaultValue="assessment" className="space-y-6">
@@ -465,7 +495,7 @@ Be very specific with career titles and provide realistic, well-justified match 
             </div>
           </>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-6 print-area">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm mb-4">
                 <Award className="w-5 h-5 text-purple-600" />
@@ -483,7 +513,7 @@ Be very specific with career titles and provide realistic, well-justified match 
                   </span>
                 )}
               </p>
-              <div className="flex gap-2 justify-center flex-wrap">
+              <div className="flex gap-2 justify-center flex-wrap no-print">
                 {user && (
                   <>
                     <Button
@@ -504,6 +534,14 @@ Be very specific with career titles and provide realistic, well-justified match 
                       )}
                     </Button>
                     <CareerPathRecommendation careerResults={results} />
+                    <Button
+                      onClick={handlePrint}
+                      variant="outline"
+                      className="border-indigo-300 hover:bg-indigo-50"
+                    >
+                      <Printer className="w-4 h-4 mr-2" />
+                      Print
+                    </Button>
                     <Button
                       onClick={shareResults}
                       variant="outline"
@@ -717,6 +755,7 @@ Be very specific with career titles and provide realistic, well-justified match 
                     setAnswers({});
                     setCurrentStep(0);
                   }}
+                  className="no-print"
                 >
                   Start Over
                 </Button>
@@ -731,7 +770,7 @@ Be very specific with career titles and provide realistic, well-justified match 
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.1 }}
                 >
-                  <Card className="shadow-lg hover:shadow-xl transition-all cursor-pointer group" onClick={() => searchCareer(career.title)}>
+                  <Card className="shadow-lg hover:shadow-xl transition-all cursor-pointer group print-card" onClick={() => searchCareer(career.title)}>
                     <CardContent className="pt-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1">
@@ -772,7 +811,7 @@ Be very specific with career titles and provide realistic, well-justified match 
                         </div>
                       )}
 
-                      <div className="flex items-center gap-2 text-purple-600 text-sm font-medium group-hover:gap-3 transition-all">
+                      <div className="flex items-center gap-2 text-purple-600 text-sm font-medium group-hover:gap-3 transition-all no-print">
                         <Search className="w-4 h-4" />
                         Click to search for {career.title} opportunities
                       </div>
