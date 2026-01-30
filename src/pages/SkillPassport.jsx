@@ -14,19 +14,34 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Shield, Plus, Target, Upload, ExternalLink, Trash2, Award } from "lucide-react";
+import { Shield, Plus, Target, Upload, ExternalLink, Trash2, Award, Sparkles, Lightbulb } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import SkillPassport from "@/components/skills/SkillPassport";
+import CollegeAutocomplete from "@/components/education/CollegeAutocomplete";
 
 export default function SkillPassportPage() {
   const [user, setUser] = useState(null);
   const [showAddSkill, setShowAddSkill] = useState(false);
+  const [showEducation, setShowEducation] = useState(false);
+  const [showInnovations, setShowInnovations] = useState(false);
+  const [innovations, setInnovations] = useState([]);
+  const [loadingInnovations, setLoadingInnovations] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     level: 'competent',
     proof_url: '',
     proof_type: 'portfolio',
     years_experience: ''
+  });
+  const [educationData, setEducationData] = useState({
+    college_name: '',
+    college_location: '',
+    college_type: '',
+    college_programs: [],
+    degree: '',
+    major: '',
+    graduation_year: '',
+    gpa: ''
   });
 
   const queryClient = useQueryClient();
@@ -37,10 +52,35 @@ export default function SkillPassportPage() {
       if (isAuth) {
         const u = await base44.auth.me();
         setUser(u);
+        if (u.education) {
+          setEducationData({ ...educationData, ...u.education });
+        }
       }
     };
     loadUser();
   }, []);
+
+  const fetchInnovations = async () => {
+    setLoadingInnovations(true);
+    try {
+      const conversation = await base44.agents.createConversation({
+        agent_name: 'skill_passport_innovator'
+      });
+      await base44.agents.addMessage(conversation, {
+        role: 'user',
+        content: `Based on current skill passport features, suggest 5 innovative ideas for enhancement. Consider my current skills: ${skills.map(s => s.name).join(', ')}`
+      });
+      const messages = conversation.messages || [];
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage?.content) {
+        setInnovations([lastMessage.content]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch innovations:', error);
+    } finally {
+      setLoadingInnovations(false);
+    }
+  };
 
   const { data: skills = [], isLoading } = useQuery({
     queryKey: ['mySkills', user?.email],
@@ -80,6 +120,17 @@ export default function SkillPassportPage() {
   const deleteSkillMutation = useMutation({
     mutationFn: (skillId) => base44.entities.Skill.delete(skillId),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mySkills'] })
+  });
+
+  const saveEducationMutation = useMutation({
+    mutationFn: async (data) => {
+      await base44.auth.updateMe({ education: data });
+    },
+    onSuccess: () => {
+      setShowEducation(false);
+      const updatedUser = { ...user, education: educationData };
+      setUser(updatedUser);
+    }
   });
 
   const handleFileUpload = async (e) => {
@@ -122,13 +173,34 @@ export default function SkillPassportPage() {
             <h1 className="text-3xl font-bold text-gray-900">My Skill Passport</h1>
             <p className="text-gray-500 mt-1">Build your proof-based professional profile</p>
           </div>
-          <Button 
-            className="bg-indigo-600 hover:bg-indigo-700 gap-2"
-            onClick={() => setShowAddSkill(true)}
-          >
-            <Plus className="w-4 h-4" />
-            Add Skill
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              className="gap-2"
+              onClick={() => {
+                setShowInnovations(!showInnovations);
+                if (!showInnovations && innovations.length === 0) fetchInnovations();
+              }}
+            >
+              <Lightbulb className="w-4 h-4" />
+              AI Ideas
+            </Button>
+            <Button 
+              variant="outline"
+              className="gap-2"
+              onClick={() => setShowEducation(true)}
+            >
+              <Target className="w-4 h-4" />
+              Education
+            </Button>
+            <Button 
+              className="bg-indigo-600 hover:bg-indigo-700 gap-2"
+              onClick={() => setShowAddSkill(true)}
+            >
+              <Plus className="w-4 h-4" />
+              Add Skill
+            </Button>
+          </div>
         </div>
 
         {/* Stats */}
@@ -175,6 +247,57 @@ export default function SkillPassportPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Education Info */}
+        {user?.education?.college_name && (
+          <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-indigo-50">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-1">{user.education.college_name}</h3>
+                  <p className="text-sm text-gray-600">{user.education.degree} in {user.education.major}</p>
+                  <p className="text-sm text-gray-500">{user.education.graduation_year}</p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setShowEducation(true)}>
+                  Edit
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* AI Innovations Panel */}
+        {showInnovations && (
+          <Card className="border-indigo-200 shadow-lg">
+            <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-indigo-600" />
+                AI Innovation Ideas
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              {loadingInnovations ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                </div>
+              ) : innovations.length > 0 ? (
+                <div className="prose prose-sm max-w-none">
+                  <div className="whitespace-pre-wrap text-gray-700">{innovations[0]}</div>
+                  <Button 
+                    className="mt-4" 
+                    variant="outline" 
+                    onClick={fetchInnovations}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Generate New Ideas
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-gray-500">No ideas generated yet</p>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Skill Passport */}
         <SkillPassport skills={skills} editable={false} />
@@ -276,6 +399,111 @@ export default function SkillPassportPage() {
                   disabled={!formData.name || addSkillMutation.isLoading}
                 >
                   {addSkillMutation.isLoading ? 'Adding...' : 'Add Skill'}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Education Dialog */}
+        <Dialog open={showEducation} onOpenChange={setShowEducation}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Education & Career Options</DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4 mt-4">
+              <div>
+                <Label>College/University</Label>
+                <CollegeAutocomplete
+                  value={educationData.college_name}
+                  onChange={(value) => setEducationData(prev => ({ ...prev, college_name: value }))}
+                  onAutofill={(data) => setEducationData(prev => ({ ...prev, ...data }))}
+                />
+              </div>
+
+              {educationData.college_location && (
+                <div className="p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+                  <p className="text-sm text-gray-700">
+                    <strong>Location:</strong> {educationData.college_location}
+                  </p>
+                  {educationData.college_type && (
+                    <p className="text-sm text-gray-700 mt-1">
+                      <strong>Type:</strong> {educationData.college_type}
+                    </p>
+                  )}
+                  {educationData.college_programs?.length > 0 && (
+                    <p className="text-sm text-gray-700 mt-1">
+                      <strong>Notable Programs:</strong> {educationData.college_programs.join(', ')}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Degree</Label>
+                  <Select 
+                    value={educationData.degree} 
+                    onValueChange={(v) => setEducationData(prev => ({ ...prev, degree: v }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select degree" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Associate">Associate</SelectItem>
+                      <SelectItem value="Bachelor">Bachelor's</SelectItem>
+                      <SelectItem value="Master">Master's</SelectItem>
+                      <SelectItem value="PhD">PhD</SelectItem>
+                      <SelectItem value="Certificate">Certificate</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label>Major/Field of Study</Label>
+                  <Input
+                    placeholder="e.g., Computer Science"
+                    value={educationData.major}
+                    onChange={(e) => setEducationData(prev => ({ ...prev, major: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Graduation Year</Label>
+                  <Input
+                    placeholder="e.g., 2024"
+                    value={educationData.graduation_year}
+                    onChange={(e) => setEducationData(prev => ({ ...prev, graduation_year: e.target.value }))}
+                  />
+                </div>
+
+                <div>
+                  <Label>GPA (Optional)</Label>
+                  <Input
+                    placeholder="e.g., 3.8"
+                    value={educationData.gpa}
+                    onChange={(e) => setEducationData(prev => ({ ...prev, gpa: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => setShowEducation(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700"
+                  onClick={() => saveEducationMutation.mutate(educationData)}
+                  disabled={!educationData.college_name || saveEducationMutation.isPending}
+                >
+                  {saveEducationMutation.isPending ? 'Saving...' : 'Save Education'}
                 </Button>
               </div>
             </div>
