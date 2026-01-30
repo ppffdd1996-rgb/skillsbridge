@@ -18,6 +18,7 @@ import { Shield, Plus, Target, Upload, ExternalLink, Trash2, Award, Sparkles, Li
 import { motion, AnimatePresence } from "framer-motion";
 import SkillPassport from "@/components/skills/SkillPassport";
 import CollegeAutocomplete from "@/components/education/CollegeAutocomplete";
+import MajorCombobox from "@/components/education/MajorCombobox";
 
 export default function SkillPassportPage() {
   const [user, setUser] = useState(null);
@@ -462,10 +463,11 @@ export default function SkillPassportPage() {
 
                 <div>
                   <Label>Major/Field of Study</Label>
-                  <Input
-                    placeholder="e.g., Computer Science"
+                  <MajorCombobox
+                    collegeName={educationData.college_name}
+                    collegePrograms={educationData.college_programs}
                     value={educationData.major}
-                    onChange={(e) => setEducationData(prev => ({ ...prev, major: e.target.value }))}
+                    onChange={(value) => setEducationData(prev => ({ ...prev, major: value }))}
                   />
                 </div>
               </div>
