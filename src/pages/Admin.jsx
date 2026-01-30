@@ -17,6 +17,7 @@ import CompanyInsights from "@/components/admin/CompanyInsights";
 import CompanyBranding from "@/components/admin/CompanyBranding";
 import TalentPoolAnalytics from "@/components/admin/TalentPoolAnalytics";
 import AvailabilityManager from "@/components/scheduling/AvailabilityManager";
+import TalentPools from "@/components/collaboration/TalentPools";
 
 export default function Admin() {
   const [user, setUser] = useState(null);
@@ -195,10 +196,14 @@ export default function Admin() {
 
         {/* Main Content */}
         <Tabs defaultValue="employers" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8">
+          <TabsList className="grid w-full grid-cols-9">
             <TabsTrigger value="employers">
               <Briefcase className="w-4 h-4 mr-2" />
               Employers
+            </TabsTrigger>
+            <TabsTrigger value="pools">
+              <Users className="w-4 h-4 mr-2" />
+              Pools
             </TabsTrigger>
             <TabsTrigger value="scheduling">
               Scheduling
@@ -307,6 +312,11 @@ export default function Admin() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Talent Pools Tab */}
+          <TabsContent value="pools">
+            <TalentPools currentUserEmail={user?.email} />
           </TabsContent>
 
           {/* Scheduling Tab */}
