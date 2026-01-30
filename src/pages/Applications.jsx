@@ -18,6 +18,8 @@ import InterviewAssistant from "@/components/applications/InterviewAssistant";
 import SkillValidation from "@/components/applications/SkillValidation";
 import MessageComposer from "@/components/communication/MessageComposer";
 import InterviewScheduler from "@/components/scheduling/InterviewScheduler";
+import RecruiterNotes from "@/components/collaboration/RecruiterNotes";
+import TeamChat from "@/components/collaboration/TeamChat";
 
 const STATUS_CONFIG = {
   applied: { label: 'Applied', color: 'bg-blue-100 text-blue-800', icon: FileText },
@@ -475,6 +477,16 @@ export default function ApplicationsPage() {
                                       Save Notes
                                     </Button>
                                   </div>
+
+                                  <RecruiterNotes 
+                                    applicationId={app.id} 
+                                    currentUserEmail={user?.email} 
+                                  />
+
+                                  <TeamChat 
+                                    opportunityId={app.opportunity_id} 
+                                    currentUserEmail={user?.email} 
+                                  />
                                 </div>
                               </DialogContent>
                             </Dialog>
