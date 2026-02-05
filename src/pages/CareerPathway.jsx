@@ -31,6 +31,14 @@ export default function CareerPathwayPage() {
   const [enhancedRecommendations, setEnhancedRecommendations] = useState(null);
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
+  const [showManualInput, setShowManualInput] = useState(false);
+  const [manualFilters, setManualFilters] = useState({
+    state: '',
+    maxCost: '',
+    maxDuration: '',
+    format: '',
+    ranking: ''
+  });
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -130,10 +138,23 @@ Be specific and realistic. Include actual program names, certification titles, a
     }
   };
 
-  const getEnhancedRecommendations = async (pathway) => {
+  const getEnhancedRecommendations = async (pathway, useManualFilters = false) => {
     setLoadingRecommendations(true);
     try {
-      const locationContext = userLocation ? `User location: ${userLocation}` : 'User location not available';
+      const locationContext = useManualFilters && manualFilters.state 
+        ? `User preferred state/location: ${manualFilters.state}` 
+        : userLocation ? `User location: ${userLocation}` : 'User location not available';
+      
+      const filterContext = useManualFilters ? `
+FILTERS REQUESTED:
+- State/Location: ${manualFilters.state || 'Any'}
+- Maximum Cost: ${manualFilters.maxCost || 'Any budget'}
+- Maximum Duration: ${manualFilters.maxDuration || 'Any duration'}
+- Format Preference: ${manualFilters.format || 'Any format (online, in-person, hybrid)'}
+- Ranking/Quality: ${manualFilters.ranking || 'Any ranking'}
+
+Please filter and prioritize results based on these preferences.
+` : '';
       
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: `Provide detailed, specific program recommendations for this career pathway:
@@ -142,6 +163,7 @@ PATHWAY: ${pathway.name}
 CAREER: ${careerData.title}
 EDUCATION TYPE: ${pathway.education}
 ${locationContext}
+${filterContext}
 
 Provide comprehensive recommendations:
 
@@ -469,28 +491,38 @@ Be extremely specific with names, rankings, and actionable details.`,
                       <Sparkles className="w-5 h-5 text-indigo-600" />
                       AI-Powered Program Recommendations
                     </CardTitle>
-                    <Button
-                      onClick={() => getEnhancedRecommendations(selectedPathway)}
-                      disabled={loadingRecommendations}
-                      className="bg-indigo-600 hover:bg-indigo-700"
-                    >
-                      {loadingRecommendations ? (
-                        <>
-                          <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          >
-                            <Sparkles className="w-4 h-4 mr-2" />
-                          </motion.div>
-                          Analyzing...
-                        </>
-                      ) : (
-                        <>
-                          <Star className="w-4 h-4 mr-2" />
-                          Get Recommendations
-                        </>
-                      )}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => getEnhancedRecommendations(selectedPathway)}
+                        disabled={loadingRecommendations}
+                        className="bg-indigo-600 hover:bg-indigo-700 flex-1"
+                      >
+                        {loadingRecommendations ? (
+                          <>
+                            <motion.div
+                              animate={{ rotate: 360 }}
+                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            >
+                              <Sparkles className="w-4 h-4 mr-2" />
+                            </motion.div>
+                            Analyzing...
+                          </>
+                        ) : (
+                          <>
+                            <Star className="w-4 h-4 mr-2" />
+                            Get Recommendations
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        onClick={() => setShowManualInput(true)}
+                        disabled={loadingRecommendations}
+                        variant="outline"
+                        className="border-indigo-300"
+                      >
+                        Custom Search
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 {enhancedRecommendations && (
