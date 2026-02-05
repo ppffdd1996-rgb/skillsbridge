@@ -98,51 +98,97 @@ export default function CandidateDashboard() {
     ['applied', 'screening', 'interviewing'].includes(a.status)
   ).length;
 
+  const isEmployer = user?.user_type === 'employer';
+  const dashboardTitle = isEmployer ? 'Recruiter Dashboard' : 'My Dashboard';
+  const dashboardSubtitle = isEmployer ? 'Manage job postings and candidates' : 'Track your applications and communications';
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Dashboard</h1>
-          <p className="text-gray-600">Track your applications and communications</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{dashboardTitle}</h1>
+          <p className="text-gray-600">{dashboardSubtitle}</p>
         </div>
 
         {/* Stats */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Total Applications</p>
-                  <p className="text-3xl font-bold text-gray-900">{applications.length}</p>
-                </div>
-                <Briefcase className="w-10 h-10 text-gray-300" />
-              </div>
-            </CardContent>
-          </Card>
+          {isEmployer ? (
+            <>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Active Jobs</p>
+                      <p className="text-3xl font-bold text-gray-900">{myOpportunities.filter(o => o.status === 'active').length}</p>
+                    </div>
+                    <Briefcase className="w-10 h-10 text-gray-300" />
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Active Applications</p>
-                  <p className="text-3xl font-bold text-indigo-600">{activeApplications}</p>
-                </div>
-                <TrendingUp className="w-10 h-10 text-indigo-300" />
-              </div>
-            </CardContent>
-          </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Total Candidates</p>
+                      <p className="text-3xl font-bold text-indigo-600">{applications.length}</p>
+                    </div>
+                    <TrendingUp className="w-10 h-10 text-indigo-300" />
+                  </div>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">Unread Messages</p>
-                  <p className="text-3xl font-bold text-purple-600">{unreadMessages}</p>
-                </div>
-                <Mail className="w-10 h-10 text-purple-300" />
-              </div>
-            </CardContent>
-          </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Unread Messages</p>
+                      <p className="text-3xl font-bold text-purple-600">{unreadMessages}</p>
+                    </div>
+                    <Mail className="w-10 h-10 text-purple-300" />
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Total Applications</p>
+                      <p className="text-3xl font-bold text-gray-900">{applications.length}</p>
+                    </div>
+                    <Briefcase className="w-10 h-10 text-gray-300" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Active Applications</p>
+                      <p className="text-3xl font-bold text-indigo-600">{activeApplications}</p>
+                    </div>
+                    <TrendingUp className="w-10 h-10 text-indigo-300" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600">Unread Messages</p>
+                      <p className="text-3xl font-bold text-purple-600">{unreadMessages}</p>
+                    </div>
+                    <Mail className="w-10 h-10 text-purple-300" />
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
 
         {/* Boost Stats for Recruiters */}
@@ -158,19 +204,102 @@ export default function CandidateDashboard() {
           </div>
         )}
 
-        <Tabs defaultValue="applications" className="space-y-6">
+        <Tabs defaultValue={isEmployer ? "jobs" : "applications"} className="space-y-6">
           <TabsList>
-            <TabsTrigger value="applications">
-              <Briefcase className="w-4 h-4 mr-2" />
-              Applications
-            </TabsTrigger>
-            <TabsTrigger value="messages">
-              <Mail className="w-4 h-4 mr-2" />
-              Messages {unreadMessages > 0 && `(${unreadMessages})`}
-            </TabsTrigger>
+            {isEmployer ? (
+              <>
+                <TabsTrigger value="jobs">
+                  <Briefcase className="w-4 h-4 mr-2" />
+                  My Jobs
+                </TabsTrigger>
+                <TabsTrigger value="candidates">
+                  <TrendingUp className="w-4 h-4 mr-2" />
+                  Candidates
+                </TabsTrigger>
+              </>
+            ) : (
+              <>
+                <TabsTrigger value="applications">
+                  <Briefcase className="w-4 h-4 mr-2" />
+                  Applications
+                </TabsTrigger>
+                <TabsTrigger value="messages">
+                  <Mail className="w-4 h-4 mr-2" />
+                  Messages {unreadMessages > 0 && `(${unreadMessages})`}
+                </TabsTrigger>
+              </>
+            )}
           </TabsList>
 
-          <TabsContent value="applications" className="space-y-4">
+          {isEmployer ? (
+            <>
+              <TabsContent value="jobs" className="space-y-4">
+                {myOpportunities.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                      <p className="text-gray-600 mb-4">No job postings yet</p>
+                      <Button onClick={() => navigate(createPageUrl('CreateOpportunity'))}>
+                        Post a Job
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  myOpportunities.map((opp) => (
+                    <Card key={opp.id} className="hover:shadow-lg transition-shadow">
+                      <CardContent className="pt-6">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-1">{opp.title}</h3>
+                            <p className="text-sm text-gray-600">{opp.company_name}</p>
+                            <Badge className="mt-2" variant={opp.status === 'active' ? 'default' : 'secondary'}>
+                              {opp.status}
+                            </Badge>
+                          </div>
+                          <Button variant="outline" size="sm">
+                            View Details
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
+
+              <TabsContent value="candidates" className="space-y-4">
+                {applications.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <TrendingUp className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                      <p className="text-gray-600">No candidates yet</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  applications.map((app) => (
+                    <Card key={app.id} className="hover:shadow-lg transition-shadow">
+                      <CardContent className="pt-6">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-1">{app.applicant_name}</h3>
+                            <p className="text-sm text-gray-600">{app.applicant_email}</p>
+                            <Badge className="mt-2">{app.status}</Badge>
+                          </div>
+                          {app.match_score && (
+                            <div className="text-right">
+                              <span className="text-2xl font-bold text-indigo-600">{app.match_score}%</span>
+                              <p className="text-xs text-gray-500">Match</p>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
+            </>
+          ) : (
+            <>
+              <TabsContent value="applications" className="space-y-4">
             {applications.length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center">
@@ -343,7 +472,65 @@ export default function CandidateDashboard() {
                 </Card>
               ))
             )}
-          </TabsContent>
+              </TabsContent>
+
+              <TabsContent value="messages" className="space-y-4">
+                {messages.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center">
+                      <Mail className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                      <p className="text-gray-600">No messages yet</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  messages.sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).map((msg) => (
+                    <Card 
+                      key={msg.id} 
+                      className={`${!msg.read ? 'border-l-4 border-l-indigo-500 bg-indigo-50/30' : ''}`}
+                    >
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-base flex items-center gap-2">
+                              {!msg.read && <div className="w-2 h-2 bg-indigo-600 rounded-full" />}
+                              {msg.subject}
+                            </CardTitle>
+                            <p className="text-sm text-gray-600 mt-1">
+                              From: {msg.sender_email}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(msg.created_date).toLocaleString()}
+                            </p>
+                          </div>
+                          {!msg.read && (
+                            <Badge variant="outline" className="bg-indigo-100 text-indigo-700">
+                              New
+                            </Badge>
+                          )}
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="prose prose-sm max-w-none">
+                          <p className="text-gray-700 whitespace-pre-wrap">{msg.body}</p>
+                        </div>
+                        {!msg.read && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-4"
+                            onClick={() => markMessageAsRead(msg.id)}
+                          >
+                            <CheckCircle className="w-4 h-4 mr-2" />
+                            Mark as Read
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
+            </>
+          )}
         </Tabs>
 
         {boostModalOpen && boostTarget && (

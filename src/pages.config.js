@@ -62,10 +62,10 @@ import MyJobs from './pages/MyJobs';
 import Opportunities from './pages/Opportunities';
 import PostJob from './pages/PostJob';
 import Profile from './pages/Profile';
+import RecruiterAI from './pages/RecruiterAI';
 import RecruiterAnalytics from './pages/RecruiterAnalytics';
 import SkillPassport from './pages/SkillPassport';
 import TalentPoolDashboard from './pages/TalentPoolDashboard';
-import RecruiterAI from './pages/RecruiterAI';
 import __Layout from './Layout.jsx';
 
 
@@ -85,10 +85,10 @@ export const PAGES = {
     "Opportunities": Opportunities,
     "PostJob": PostJob,
     "Profile": Profile,
+    "RecruiterAI": RecruiterAI,
     "RecruiterAnalytics": RecruiterAnalytics,
     "SkillPassport": SkillPassport,
     "TalentPoolDashboard": TalentPoolDashboard,
-    "RecruiterAI": RecruiterAI,
 }
 
 export const pagesConfig = {
