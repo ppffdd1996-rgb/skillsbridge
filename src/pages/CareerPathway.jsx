@@ -196,7 +196,8 @@ Be extremely specific with names, rankings, and actionable details.`,
                   institution: { type: "string" },
                   distance: { type: "string" },
                   tuition: { type: "string" },
-                  rating: { type: "string" }
+                  rating: { type: "string" },
+                  website: { type: "string" }
                 }
               }
             },
@@ -210,7 +211,8 @@ Be extremely specific with names, rankings, and actionable details.`,
                   format: { type: "string" },
                   duration: { type: "string" },
                   cost: { type: "string" },
-                  job_placement_rate: { type: "string" }
+                  job_placement_rate: { type: "string" },
+                  website: { type: "string" }
                 }
               }
             },
@@ -556,8 +558,22 @@ Be extremely specific with names, rankings, and actionable details.`,
                           {enhancedRecommendations.local_programs.map((program, idx) => (
                             <Card key={idx} className="border-l-4 border-l-green-500">
                               <CardContent className="p-4">
-                                <h4 className="font-semibold text-gray-900">{program.name}</h4>
-                                <p className="text-sm text-gray-600 mb-2">{program.institution}</p>
+                                <div className="flex items-start justify-between mb-2">
+                                  <div>
+                                    <h4 className="font-semibold text-gray-900">{program.name}</h4>
+                                    <p className="text-sm text-gray-600">{program.institution}</p>
+                                  </div>
+                                  {program.website && (
+                                    <a 
+                                      href={program.website} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="text-green-600 hover:text-green-700"
+                                    >
+                                      <ExternalLink className="w-4 h-4" />
+                                    </a>
+                                  )}
+                                </div>
                                 <div className="flex gap-2 text-sm">
                                   <Badge variant="outline">{program.distance}</Badge>
                                   <Badge variant="outline">{program.tuition}</Badge>
@@ -581,8 +597,22 @@ Be extremely specific with names, rankings, and actionable details.`,
                           {enhancedRecommendations.online_options.map((program, idx) => (
                             <Card key={idx} className="border-l-4 border-l-blue-500">
                               <CardContent className="p-4">
-                                <h4 className="font-semibold text-gray-900">{program.name}</h4>
-                                <p className="text-sm text-gray-600 mb-2">{program.provider}</p>
+                                <div className="flex items-start justify-between mb-2">
+                                  <div>
+                                    <h4 className="font-semibold text-gray-900">{program.name}</h4>
+                                    <p className="text-sm text-gray-600">{program.provider}</p>
+                                  </div>
+                                  {program.website && (
+                                    <a 
+                                      href={program.website} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="text-blue-600 hover:text-blue-700"
+                                    >
+                                      <ExternalLink className="w-4 h-4" />
+                                    </a>
+                                  )}
+                                </div>
                                 <div className="flex gap-2 text-sm flex-wrap">
                                   <Badge variant="outline">{program.format}</Badge>
                                   <Badge variant="outline">{program.duration}</Badge>
