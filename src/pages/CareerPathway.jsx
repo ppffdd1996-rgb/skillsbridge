@@ -3,6 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { 
   GraduationCap, 
   Briefcase, 
@@ -747,6 +751,75 @@ Be extremely specific with names, rankings, and actionable details.`,
           )}
         </div>
       </div>
+
+      {/* Manual Input Dialog */}
+      <Dialog open={showManualInput} onOpenChange={setShowManualInput}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Custom Program Search</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>State/Location</Label>
+              <Input
+                placeholder="e.g., California, New York"
+                value={manualFilters.state}
+                onChange={(e) => setManualFilters(prev => ({ ...prev, state: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>Maximum Cost</Label>
+              <Input
+                placeholder="e.g., $50,000, Free, Under $10k"
+                value={manualFilters.maxCost}
+                onChange={(e) => setManualFilters(prev => ({ ...prev, maxCost: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>Maximum Duration</Label>
+              <Input
+                placeholder="e.g., 6 months, 2 years, 12 weeks"
+                value={manualFilters.maxDuration}
+                onChange={(e) => setManualFilters(prev => ({ ...prev, maxDuration: e.target.value }))}
+              />
+            </div>
+            <div>
+              <Label>Format Preference</Label>
+              <Select 
+                value={manualFilters.format} 
+                onValueChange={(value) => setManualFilters(prev => ({ ...prev, format: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select format..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">Any Format</SelectItem>
+                  <SelectItem value="online">Online Only</SelectItem>
+                  <SelectItem value="in-person">In-Person Only</SelectItem>
+                  <SelectItem value="hybrid">Hybrid</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Ranking/Quality Preference</Label>
+              <Input
+                placeholder="e.g., Top 50, Highly ranked, Any"
+                value={manualFilters.ranking}
+                onChange={(e) => setManualFilters(prev => ({ ...prev, ranking: e.target.value }))}
+              />
+            </div>
+            <Button
+              onClick={() => {
+                getEnhancedRecommendations(selectedPathway, true);
+                setShowManualInput(false);
+              }}
+              className="w-full bg-indigo-600 hover:bg-indigo-700"
+            >
+              Search Programs
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
