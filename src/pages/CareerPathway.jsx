@@ -36,6 +36,7 @@ export default function CareerPathwayPage() {
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [showManualInput, setShowManualInput] = useState(false);
+  const detailsRef = React.useRef(null);
   const [manualFilters, setManualFilters] = useState({
     state: '',
     maxCost: '',
@@ -348,6 +349,9 @@ Be extremely specific with names, rankings, and actionable details.`,
                   onClick={() => {
                     setSelectedPathway(pathway);
                     setEnhancedRecommendations(null);
+                    setTimeout(() => {
+                      detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 0);
                   }}
                 >
                   <CardContent className="p-4">
@@ -373,7 +377,7 @@ Be extremely specific with names, rankings, and actionable details.`,
 
           {/* Detailed Pathway View */}
           {selectedPathway && (
-            <div className="lg:col-span-2 space-y-6">
+            <div ref={detailsRef} className="lg:col-span-2 space-y-6">
               {/* Overview */}
               <Card className="border-0 shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
