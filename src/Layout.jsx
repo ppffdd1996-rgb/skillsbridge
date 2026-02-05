@@ -51,6 +51,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Create Opportunity', page: 'CreateOpportunity', icon: PlusCircle },
     { name: 'Applications', page: 'Applications', icon: ClipboardList },
     { name: 'Analytics', page: 'RecruiterAnalytics', icon: TrendingUp },
+    { name: 'AI Assistant', page: 'RecruiterAI', icon: Sparkles },
     ...(user.role === 'admin' ? [{ name: 'Talent Pool AI', page: 'TalentPoolDashboard', icon: Sparkles }] : []),
   ] : [];
 

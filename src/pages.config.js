@@ -51,6 +51,7 @@ import Admin from './pages/Admin';
 import Applications from './pages/Applications';
 import CandidateDashboard from './pages/CandidateDashboard';
 import CareerMatch from './pages/CareerMatch';
+import CareerPathway from './pages/CareerPathway';
 import Companies from './pages/Companies';
 import CreateOpportunity from './pages/CreateOpportunity';
 import Discover from './pages/Discover';
@@ -64,7 +65,7 @@ import Profile from './pages/Profile';
 import RecruiterAnalytics from './pages/RecruiterAnalytics';
 import SkillPassport from './pages/SkillPassport';
 import TalentPoolDashboard from './pages/TalentPoolDashboard';
-import CareerPathway from './pages/CareerPathway';
+import RecruiterAI from './pages/RecruiterAI';
 import __Layout from './Layout.jsx';
 
 
@@ -73,6 +74,7 @@ export const PAGES = {
     "Applications": Applications,
     "CandidateDashboard": CandidateDashboard,
     "CareerMatch": CareerMatch,
+    "CareerPathway": CareerPathway,
     "Companies": Companies,
     "CreateOpportunity": CreateOpportunity,
     "Discover": Discover,
@@ -86,7 +88,7 @@ export const PAGES = {
     "RecruiterAnalytics": RecruiterAnalytics,
     "SkillPassport": SkillPassport,
     "TalentPoolDashboard": TalentPoolDashboard,
-    "CareerPathway": CareerPathway,
+    "RecruiterAI": RecruiterAI,
 }
 
 export const pagesConfig = {
