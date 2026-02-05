@@ -14,7 +14,12 @@ import {
   BookOpen,
   Award,
   Users,
-  Lightbulb
+  Lightbulb,
+  MapPin,
+  Globe,
+  Star,
+  ExternalLink,
+  Sparkles
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -23,10 +28,22 @@ export default function CareerPathwayPage() {
   const [pathways, setPathways] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPathway, setSelectedPathway] = useState(null);
+  const [enhancedRecommendations, setEnhancedRecommendations] = useState(null);
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const careerParam = params.get('career');
+    
+    const loadUser = async () => {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const u = await base44.auth.me();
+        setUserLocation(u.location);
+      }
+    };
+    loadUser();
     
     if (careerParam) {
       try {
@@ -113,6 +130,126 @@ Be specific and realistic. Include actual program names, certification titles, a
     }
   };
 
+  const getEnhancedRecommendations = async (pathway) => {
+    setLoadingRecommendations(true);
+    try {
+      const locationContext = userLocation ? `User location: ${userLocation}` : 'User location not available';
+      
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Provide detailed, specific program recommendations for this career pathway:
+
+PATHWAY: ${pathway.name}
+CAREER: ${careerData.title}
+EDUCATION TYPE: ${pathway.education}
+${locationContext}
+
+Provide comprehensive recommendations:
+
+1. TOP NATIONAL PROGRAMS (if applicable):
+   - List 5-10 specific, highly-ranked institutions/programs
+   - Include rankings, acceptance rates, tuition costs
+   - Notable strengths of each program
+   
+2. LOCAL/REGIONAL OPTIONS (if user location provided):
+   - Programs within 50-100 miles of user location
+   - Quality ratings and affordability
+   
+3. ONLINE/REMOTE OPTIONS:
+   - Best online programs or bootcamps
+   - Flexibility and cost benefits
+   
+4. SPECIFIC RESOURCES:
+   - Exact course names, certification titles
+   - Websites and application links
+   - Community resources (Discord, Reddit, etc.)
+   
+5. FINANCIAL AID:
+   - Scholarship opportunities
+   - Income share agreements
+   - Employer sponsorship options
+   
+Be extremely specific with names, rankings, and actionable details.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            national_programs: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  institution: { type: "string" },
+                  ranking: { type: "string" },
+                  tuition: { type: "string" },
+                  acceptance_rate: { type: "string" },
+                  strengths: { type: "string" },
+                  website: { type: "string" }
+                }
+              }
+            },
+            local_programs: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  institution: { type: "string" },
+                  distance: { type: "string" },
+                  tuition: { type: "string" },
+                  rating: { type: "string" }
+                }
+              }
+            },
+            online_options: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  provider: { type: "string" },
+                  format: { type: "string" },
+                  duration: { type: "string" },
+                  cost: { type: "string" },
+                  job_placement_rate: { type: "string" }
+                }
+              }
+            },
+            resources: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  type: { type: "string" },
+                  name: { type: "string" },
+                  description: { type: "string" },
+                  link: { type: "string" }
+                }
+              }
+            },
+            financial_aid: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  type: { type: "string" },
+                  name: { type: "string" },
+                  description: { type: "string" },
+                  eligibility: { type: "string" }
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      setEnhancedRecommendations(response);
+    } catch (error) {
+      console.error('Failed to get enhanced recommendations:', error);
+    } finally {
+      setLoadingRecommendations(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50">
@@ -180,7 +317,10 @@ Be specific and realistic. Include actual program names, certification titles, a
                       ? 'border-indigo-600 shadow-lg' 
                       : 'hover:border-indigo-300'
                   }`}
-                  onClick={() => setSelectedPathway(pathway)}
+                  onClick={() => {
+                    setSelectedPathway(pathway);
+                    setEnhancedRecommendations(null);
+                  }}
                 >
                   <CardContent className="p-4">
                     <h3 className="font-semibold text-gray-900 mb-2">{pathway.name}</h3>
@@ -317,6 +457,209 @@ Be specific and realistic. Include actual program names, certification titles, a
                     ))}
                   </div>
                 </CardContent>
+              </Card>
+
+              {/* Enhanced Recommendations */}
+              <Card className="border-2 border-indigo-300">
+                <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-indigo-600" />
+                      AI-Powered Program Recommendations
+                    </CardTitle>
+                    <Button
+                      onClick={() => getEnhancedRecommendations(selectedPathway)}
+                      disabled={loadingRecommendations}
+                      className="bg-indigo-600 hover:bg-indigo-700"
+                    >
+                      {loadingRecommendations ? (
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          >
+                            <Sparkles className="w-4 h-4 mr-2" />
+                          </motion.div>
+                          Analyzing...
+                        </>
+                      ) : (
+                        <>
+                          <Star className="w-4 h-4 mr-2" />
+                          Get Recommendations
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardHeader>
+                {enhancedRecommendations && (
+                  <CardContent className="pt-6 space-y-6">
+                    {/* National Programs */}
+                    {enhancedRecommendations.national_programs?.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <Star className="w-5 h-5 text-yellow-500" />
+                          Top-Rated National Programs
+                        </h3>
+                        <div className="space-y-3">
+                          {enhancedRecommendations.national_programs.map((program, idx) => (
+                            <Card key={idx} className="border-l-4 border-l-yellow-500">
+                              <CardContent className="p-4">
+                                <div className="flex items-start justify-between mb-2">
+                                  <div>
+                                    <h4 className="font-semibold text-gray-900">{program.name}</h4>
+                                    <p className="text-sm text-gray-600">{program.institution}</p>
+                                  </div>
+                                  {program.website && (
+                                    <a 
+                                      href={program.website} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="text-indigo-600 hover:text-indigo-700"
+                                    >
+                                      <ExternalLink className="w-4 h-4" />
+                                    </a>
+                                  )}
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 text-sm mb-2">
+                                  {program.ranking && (
+                                    <Badge variant="outline" className="justify-start">
+                                      Rank: {program.ranking}
+                                    </Badge>
+                                  )}
+                                  {program.tuition && (
+                                    <Badge variant="outline" className="justify-start">
+                                      {program.tuition}
+                                    </Badge>
+                                  )}
+                                  {program.acceptance_rate && (
+                                    <Badge variant="outline" className="justify-start">
+                                      Accept: {program.acceptance_rate}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-gray-700">{program.strengths}</p>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Local Programs */}
+                    {enhancedRecommendations.local_programs?.length > 0 && userLocation && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <MapPin className="w-5 h-5 text-green-600" />
+                          Programs Near You
+                        </h3>
+                        <div className="space-y-3">
+                          {enhancedRecommendations.local_programs.map((program, idx) => (
+                            <Card key={idx} className="border-l-4 border-l-green-500">
+                              <CardContent className="p-4">
+                                <h4 className="font-semibold text-gray-900">{program.name}</h4>
+                                <p className="text-sm text-gray-600 mb-2">{program.institution}</p>
+                                <div className="flex gap-2 text-sm">
+                                  <Badge variant="outline">{program.distance}</Badge>
+                                  <Badge variant="outline">{program.tuition}</Badge>
+                                  {program.rating && <Badge variant="outline">Rating: {program.rating}</Badge>}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Online Options */}
+                    {enhancedRecommendations.online_options?.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <Globe className="w-5 h-5 text-blue-600" />
+                          Online & Remote Programs
+                        </h3>
+                        <div className="space-y-3">
+                          {enhancedRecommendations.online_options.map((program, idx) => (
+                            <Card key={idx} className="border-l-4 border-l-blue-500">
+                              <CardContent className="p-4">
+                                <h4 className="font-semibold text-gray-900">{program.name}</h4>
+                                <p className="text-sm text-gray-600 mb-2">{program.provider}</p>
+                                <div className="flex gap-2 text-sm flex-wrap">
+                                  <Badge variant="outline">{program.format}</Badge>
+                                  <Badge variant="outline">{program.duration}</Badge>
+                                  <Badge variant="outline">{program.cost}</Badge>
+                                  {program.job_placement_rate && (
+                                    <Badge className="bg-green-100 text-green-700">
+                                      {program.job_placement_rate} placement
+                                    </Badge>
+                                  )}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Resources */}
+                    {enhancedRecommendations.resources?.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <BookOpen className="w-5 h-5 text-purple-600" />
+                          Additional Resources
+                        </h3>
+                        <div className="grid gap-2">
+                          {enhancedRecommendations.resources.map((resource, idx) => (
+                            <div key={idx} className="flex items-start gap-2 p-3 bg-purple-50 rounded-lg">
+                              <Badge className="bg-purple-600">{resource.type}</Badge>
+                              <div className="flex-1">
+                                <p className="font-medium text-gray-900">{resource.name}</p>
+                                <p className="text-sm text-gray-600">{resource.description}</p>
+                                {resource.link && (
+                                  <a 
+                                    href={resource.link} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-indigo-600 hover:text-indigo-700 inline-flex items-center gap-1 mt-1"
+                                  >
+                                    Visit <ExternalLink className="w-3 h-3" />
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Financial Aid */}
+                    {enhancedRecommendations.financial_aid?.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                          <DollarSign className="w-5 h-5 text-emerald-600" />
+                          Financial Aid Options
+                        </h3>
+                        <div className="space-y-2">
+                          {enhancedRecommendations.financial_aid.map((aid, idx) => (
+                            <Card key={idx} className="bg-emerald-50 border-emerald-200">
+                              <CardContent className="p-4">
+                                <div className="flex items-start gap-2">
+                                  <Badge className="bg-emerald-600">{aid.type}</Badge>
+                                  <div className="flex-1">
+                                    <h4 className="font-semibold text-gray-900">{aid.name}</h4>
+                                    <p className="text-sm text-gray-700 mb-1">{aid.description}</p>
+                                    {aid.eligibility && (
+                                      <p className="text-xs text-gray-600">Eligibility: {aid.eligibility}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                )}
               </Card>
 
               {/* CTA */}
