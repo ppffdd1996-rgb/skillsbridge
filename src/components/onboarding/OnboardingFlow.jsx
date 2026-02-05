@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CheckCircle, Sparkles, User, Briefcase, Target, ArrowRight, X, Loader2 } from "lucide-react";
+import { CheckCircle, Sparkles, User, Briefcase, Target, ArrowRight, X, Loader2, Users } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const STEPS = [
+  { id: 'userType', title: 'User Type', icon: User, page: null },
   { id: 'welcome', title: 'Welcome', icon: Sparkles, page: null },
   { id: 'profile', title: 'Setup Profile', icon: User, page: 'Profile' },
   { id: 'opportunity', title: 'Create Job', icon: Briefcase, page: 'CreateOpportunity' },
@@ -23,6 +24,7 @@ export default function OnboardingFlow({ user }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [guidance, setGuidance] = useState(null);
   const [loadingGuidance, setLoadingGuidance] = useState(false);
+  const [selectedUserType, setSelectedUserType] = useState(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -74,6 +76,11 @@ export default function OnboardingFlow({ user }) {
   const nextStep = async () => {
     const step = STEPS[currentStep];
     const newCompletedSteps = [...(onboarding.completed_steps || []), step.id];
+    
+    // Save user type if on userType step
+    if (step.id === 'userType' && selectedUserType) {
+      await base44.auth.updateMe({ user_type: selectedUserType });
+    }
     
     if (currentStep < STEPS.length - 1) {
       const nextStepIndex = currentStep + 1;
@@ -171,38 +178,80 @@ export default function OnboardingFlow({ user }) {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-4"
             >
-              <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <StepIcon className="w-5 h-5 text-indigo-600" />
-                    {step.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {loadingGuidance ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
-                    </div>
-                  ) : guidance ? (
-                    <div className="space-y-4">
-                      <p className="text-gray-700">{guidance.message}</p>
-                      {guidance.tips && guidance.tips.length > 0 && (
-                        <div className="bg-white/60 rounded-lg p-4">
-                          <p className="text-sm font-medium text-gray-900 mb-2">💡 Tips:</p>
-                          <ul className="space-y-2">
-                            {guidance.tips.map((tip, idx) => (
-                              <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
-                                <span className="text-indigo-600 mt-0.5">•</span>
-                                {tip}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  ) : null}
-                </CardContent>
-              </Card>
+              {step.id === 'userType' ? (
+                <div className="space-y-4">
+                  <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Users className="w-5 h-5 text-indigo-600" />
+                        What's your role?
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-700 mb-6">Choose your role to personalize your experience:</p>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <button
+                          onClick={() => setSelectedUserType('employer')}
+                          className={`p-4 rounded-lg border-2 transition-all ${
+                            selectedUserType === 'employer'
+                              ? 'border-indigo-600 bg-indigo-50'
+                              : 'border-gray-200 hover:border-indigo-300'
+                          }`}
+                        >
+                          <Briefcase className="w-8 h-8 text-indigo-600 mb-2" />
+                          <h3 className="font-semibold text-gray-900 mb-1">Employer</h3>
+                          <p className="text-sm text-gray-600">Post jobs, manage candidates, hire talent</p>
+                        </button>
+                        <button
+                          onClick={() => setSelectedUserType('candidate')}
+                          className={`p-4 rounded-lg border-2 transition-all ${
+                            selectedUserType === 'candidate'
+                              ? 'border-indigo-600 bg-indigo-50'
+                              : 'border-gray-200 hover:border-indigo-300'
+                          }`}
+                        >
+                          <User className="w-8 h-8 text-indigo-600 mb-2" />
+                          <h3 className="font-semibold text-gray-900 mb-1">Candidate</h3>
+                          <p className="text-sm text-gray-600">Browse jobs, apply, track applications</p>
+                        </button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <StepIcon className="w-5 h-5 text-indigo-600" />
+                      {step.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {loadingGuidance ? (
+                      <div className="flex items-center justify-center py-8">
+                        <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+                      </div>
+                    ) : guidance ? (
+                      <div className="space-y-4">
+                        <p className="text-gray-700">{guidance.message}</p>
+                        {guidance.tips && guidance.tips.length > 0 && (
+                          <div className="bg-white/60 rounded-lg p-4">
+                            <p className="text-sm font-medium text-gray-900 mb-2">💡 Tips:</p>
+                            <ul className="space-y-2">
+                              {guidance.tips.map((tip, idx) => (
+                                <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
+                                  <span className="text-indigo-600 mt-0.5">•</span>
+                                  {tip}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    ) : null}
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Action Buttons */}
               <div className="flex gap-2 justify-end">
@@ -218,14 +267,15 @@ export default function OnboardingFlow({ user }) {
                 )}
                 <Button
                   onClick={nextStep}
-                  className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+                  disabled={step.id === 'userType' && !selectedUserType}
+                  className="gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
                 >
                   {currentStep === STEPS.length - 1 ? 'Finish' : 'Next'}
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
-            </motion.div>
-          </AnimatePresence>
+              </motion.div>
+              </AnimatePresence>
         </div>
       </DialogContent>
     </Dialog>
