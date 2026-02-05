@@ -9,119 +9,68 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { application_id } = await req.json();
+    const {
+      opportunityId,
+      opportunityTitle,
+      jobDescription,
+      candidateName,
+      candidateSkills,
+      candidateExperience,
+      interviewType = 'technical'
+    } = await req.json();
 
-    // Get application and opportunity details
-    const application = await base44.entities.Application.filter({ id: application_id });
-    if (!application || application.length === 0) {
-      return Response.json({ error: 'Application not found' }, { status: 404 });
+    if (!jobDescription) {
+      return Response.json(
+        { error: 'Missing required field: jobDescription' },
+        { status: 400 }
+      );
     }
 
-    const app = application[0];
-    const opportunity = await base44.entities.Opportunity.filter({ id: app.opportunity_id });
-    if (!opportunity || opportunity.length === 0) {
-      return Response.json({ error: 'Opportunity not found' }, { status: 404 });
-    }
+    const prompt = `You are an expert recruiter and interview coach. Generate comprehensive interview questions for a ${interviewType} interview.
 
-    const opp = opportunity[0];
+Job Position: ${opportunityTitle || 'Not specified'}
+Job Description:
+${jobDescription}
 
-    const prompt = `As an expert hiring manager and interviewer, generate a comprehensive set of interview questions for the following scenario:
+Candidate Name: ${candidateName || 'Unknown'}
+Candidate Skills: ${candidateSkills ? candidateSkills.join(', ') : 'Not provided'}
+Candidate Experience: ${candidateExperience || 'Not provided'}
+Interview Type: ${interviewType}
 
-POSITION DETAILS:
-- Role: ${opp.title}
-- Company: ${opp.company_name}
-- Industry: ${opp.industry}
-- Key Responsibilities: ${opp.key_responsibilities?.join(', ')}
-- Required Skills: ${opp.skills_required?.join(', ')}
+Generate ${interviewType === 'technical' ? 8 : 10} interview questions that:
+1. Assess relevant skills and experience
+2. Explore problem-solving abilities
+3. Evaluate cultural fit
+4. Include follow-up probing questions
 
-CANDIDATE PROFILE:
-- Name: ${app.applicant_name}
-- Match Score: ${app.match_score}%
-- Strengths: ${app.strengths?.join(', ') || 'N/A'}
-- Concerns: ${app.concerns?.join(', ') || 'N/A'}
-- AI Summary: ${app.ai_summary || 'N/A'}
+Format your response as a JSON array with this structure:
+[
+  {
+    "question": "The main question",
+    "category": "technical|behavioral|situational|culture-fit",
+    "difficulty": "easy|medium|hard",
+    "why": "Why this question is important",
+    "followUp": ["Follow-up question 1", "Follow-up question 2"]
+  }
+]
 
-Generate a structured interview guide with:
-
-1. **Warm-up Questions** (2-3): Ice-breakers to make the candidate comfortable
-2. **Technical/Role-Specific Questions** (5-7): Deep dive into required skills and experience
-3. **Behavioral Questions** (4-6): Assess soft skills, teamwork, problem-solving
-4. **Scenario-Based Questions** (3-4): Real-world situations related to the role
-5. **Gap Analysis Questions** (2-3): Address any concerns or gaps identified in the screening
-6. **Closing Questions** (2): Candidate questions and next steps
-
-For each question, provide:
-- The question itself
-- What you're assessing
-- Follow-up probes
-- Red flags to watch for`;
+Return ONLY the JSON array, no additional text.`;
 
     const response = await base44.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
-        type: "object",
+        type: 'object',
         properties: {
-          warmup_questions: {
-            type: "array",
+          questions: {
+            type: 'array',
             items: {
-              type: "object",
+              type: 'object',
               properties: {
-                question: { type: "string" },
-                purpose: { type: "string" }
-              }
-            }
-          },
-          technical_questions: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                question: { type: "string" },
-                assessing: { type: "string" },
-                followups: { type: "array", items: { type: "string" } },
-                red_flags: { type: "array", items: { type: "string" } }
-              }
-            }
-          },
-          behavioral_questions: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                question: { type: "string" },
-                assessing: { type: "string" },
-                followups: { type: "array", items: { type: "string" } }
-              }
-            }
-          },
-          scenario_questions: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                question: { type: "string" },
-                assessing: { type: "string" },
-                ideal_response_hints: { type: "array", items: { type: "string" } }
-              }
-            }
-          },
-          gap_analysis_questions: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                question: { type: "string" },
-                concern: { type: "string" }
-              }
-            }
-          },
-          closing_questions: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                question: { type: "string" },
-                purpose: { type: "string" }
+                question: { type: 'string' },
+                category: { type: 'string' },
+                difficulty: { type: 'string' },
+                why: { type: 'string' },
+                followUp: { type: 'array', items: { type: 'string' } }
               }
             }
           }
@@ -129,12 +78,33 @@ For each question, provide:
       }
     });
 
+    // Parse response
+    let questions = [];
+    if (typeof response === 'string') {
+      try {
+        questions = JSON.parse(response);
+        if (!Array.isArray(questions)) {
+          questions = questions.questions || [];
+        }
+      } catch (e) {
+        questions = [];
+      }
+    } else if (response.questions) {
+      questions = response.questions;
+    } else if (Array.isArray(response)) {
+      questions = response;
+    }
+
     return Response.json({
       success: true,
-      interview_guide: response
+      opportunityTitle,
+      candidateName,
+      interviewType,
+      totalQuestions: questions.length,
+      questions: questions.slice(0, 10)
     });
   } catch (error) {
-    console.error('Error generating interview questions:', error);
+    console.error('Generate interview questions error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
