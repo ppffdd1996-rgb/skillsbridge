@@ -64,6 +64,7 @@ import Profile from './pages/Profile';
 import RecruiterAnalytics from './pages/RecruiterAnalytics';
 import SkillPassport from './pages/SkillPassport';
 import TalentPoolDashboard from './pages/TalentPoolDashboard';
+import CareerPathway from './pages/CareerPathway';
 import __Layout from './Layout.jsx';
 
 
@@ -85,6 +86,7 @@ export const PAGES = {
     "RecruiterAnalytics": RecruiterAnalytics,
     "SkillPassport": SkillPassport,
     "TalentPoolDashboard": TalentPoolDashboard,
+    "CareerPathway": CareerPathway,
 }
 
 export const pagesConfig = {
