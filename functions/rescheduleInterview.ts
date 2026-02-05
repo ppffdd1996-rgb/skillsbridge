@@ -9,92 +9,100 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { interview_id, new_scheduled_time, reason } = await req.json();
+    const {
+      eventId,
+      newScheduledTime,
+      durationMinutes = 60,
+      notificationMessage
+    } = await req.json();
 
-    // Get original interview
-    const interviews = await base44.entities.Interview.filter({ id: interview_id });
-    const oldInterview = interviews[0];
-
-    if (!oldInterview) {
-      return Response.json({ error: 'Interview not found' }, { status: 404 });
+    if (!eventId || !newScheduledTime) {
+      return Response.json(
+        { error: 'Missing required fields: eventId, newScheduledTime' },
+        { status: 400 }
+      );
     }
 
-    // Mark old interview as rescheduled
-    await base44.entities.Interview.update(interview_id, {
-      status: 'rescheduled',
-      cancellation_reason: reason
-    });
+    // Get Google Calendar access token
+    const accessToken = await base44.asServiceRole.connectors.getAccessToken('googlecalendar');
 
-    // Create new interview
-    const newInterview = await base44.entities.Interview.create({
-      application_id: oldInterview.application_id,
-      recruiter_email: oldInterview.recruiter_email,
-      candidate_email: oldInterview.candidate_email,
-      scheduled_time: new_scheduled_time,
-      duration_minutes: oldInterview.duration_minutes,
-      status: 'scheduled',
-      meeting_link: oldInterview.meeting_link,
-      location: oldInterview.location,
-      rescheduled_from: interview_id
-    });
+    // First, get the existing event
+    const getResponse = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }
+    );
 
-    // Get application and opportunity details
-    const apps = await base44.entities.Application.filter({ id: oldInterview.application_id });
-    const application = apps[0];
-    const opps = await base44.entities.Opportunity.filter({ id: application.opportunity_id });
-    const opportunity = opps[0];
+    if (!getResponse.ok) {
+      return Response.json(
+        { error: 'Failed to fetch event' },
+        { status: getResponse.status }
+      );
+    }
 
-    // Update application
-    await base44.entities.Application.update(oldInterview.application_id, {
-      interview_date: new_scheduled_time
-    });
+    const event = await getResponse.json();
 
-    const newDate = new Date(new_scheduled_time).toLocaleString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      timeZoneName: 'short'
-    });
+    // Calculate new times
+    const startDateTime = new Date(newScheduledTime);
+    const endDateTime = new Date(startDateTime.getTime() + durationMinutes * 60000);
 
-    // Send notification emails
-    await base44.integrations.Core.SendEmail({
-      to: oldInterview.candidate_email,
-      subject: `Interview Rescheduled: ${opportunity.title}`,
-      body: `Your interview has been rescheduled.
+    // Update event with new times
+    event.start = {
+      dateTime: startDateTime.toISOString(),
+      timeZone: 'UTC'
+    };
+    event.end = {
+      dateTime: endDateTime.toISOString(),
+      timeZone: 'UTC'
+    };
 
-Position: ${opportunity.title}
-New Date & Time: ${newDate}
-Meeting Link: ${newInterview.meeting_link}
+    // Add reschedule note to description
+    if (notificationMessage) {
+      event.description = (event.description || '') + `\n\n[RESCHEDULED] ${notificationMessage}`;
+    } else {
+      event.description = (event.description || '') + `\n\n[RESCHEDULED] This interview has been rescheduled. New time: ${startDateTime.toLocaleString()}`;
+    }
 
-${reason ? `Reason: ${reason}` : ''}
+    // Update the event
+    const updateResponse = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          start: event.start,
+          end: event.end,
+          description: event.description
+        })
+      }
+    );
 
-Please let us know if you have any concerns.
+    if (!updateResponse.ok) {
+      const errorData = await updateResponse.text();
+      return Response.json(
+        { error: 'Failed to reschedule interview', details: errorData },
+        { status: updateResponse.status }
+      );
+    }
 
-Best regards,
-SkillsBridge Team`
-    });
-
-    await base44.integrations.Core.SendEmail({
-      to: oldInterview.recruiter_email,
-      subject: `Interview Rescheduled: ${application.applicant_name}`,
-      body: `Interview with ${application.applicant_name} has been rescheduled.
-
-New Date & Time: ${newDate}
-Meeting Link: ${newInterview.meeting_link}
-
-Best regards,
-SkillsBridge`
-    });
+    const updatedEvent = await updateResponse.json();
 
     return Response.json({
       success: true,
-      interview: newInterview
+      message: 'Interview rescheduled successfully',
+      eventId: updatedEvent.id,
+      newStartTime: updatedEvent.start.dateTime,
+      newEndTime: updatedEvent.end.dateTime,
+      attendees: updatedEvent.attendees?.map(a => a.email) || []
     });
   } catch (error) {
-    console.error('Error rescheduling interview:', error);
+    console.error('Reschedule interview error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
