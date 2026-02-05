@@ -811,9 +811,32 @@ Be very specific with career titles and provide realistic, well-justified match 
                         </div>
                       )}
 
-                      <div className="flex items-center gap-2 text-purple-600 text-sm font-medium group-hover:gap-3 transition-all no-print">
-                        <Search className="w-4 h-4" />
-                        Click to search for {career.title} opportunities
+                      <div className="flex gap-2 no-print">
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           const careerParam = encodeURIComponent(JSON.stringify(career));
+                           window.location.href = `/CareerPathway?career=${careerParam}`;
+                         }}
+                         className="text-indigo-600 hover:text-indigo-700"
+                       >
+                         <TrendingUp className="w-4 h-4 mr-1" />
+                         View Pathway
+                       </Button>
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           searchCareer(career.title);
+                         }}
+                         className="text-purple-600 hover:text-purple-700"
+                       >
+                         <Search className="w-4 h-4 mr-1" />
+                         Search Jobs
+                       </Button>
                       </div>
                     </CardContent>
                   </Card>
