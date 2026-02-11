@@ -72,6 +72,7 @@ import AdminSupport from './pages/AdminSupport';
 import Privacy from './pages/Privacy';
 import Messages from './pages/Messages';
 import EnhancedMatching from './pages/EnhancedMatching';
+import SkillDevelopment from './pages/SkillDevelopment';
 import __Layout from './Layout.jsx';
 
 
@@ -101,6 +102,7 @@ export const PAGES = {
     "Privacy": Privacy,
     "Messages": Messages,
     "EnhancedMatching": EnhancedMatching,
+    "SkillDevelopment": SkillDevelopment,
 }
 
 export const pagesConfig = {

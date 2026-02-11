@@ -9,31 +9,31 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { skills_to_learn, learning_style, time_commitment } = await req.json();
+    const { skill_gaps } = await req.json();
 
-    const prompt = `As a learning advisor with deep knowledge of online education platforms, recommend high-quality learning resources.
+    if (!skill_gaps || skill_gaps.length === 0) {
+      return Response.json({ error: 'skill_gaps required' }, { status: 400 });
+    }
 
-SKILLS TO LEARN: ${skills_to_learn.join(', ')}
-LEARNING STYLE: ${learning_style || 'mixed'}
-TIME COMMITMENT: ${time_commitment || 'moderate'}
+    // Use AI to find and recommend learning resources
+    const recommendations = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt: `Recommend specific learning resources for these skill gaps:
 
-For each skill, recommend:
-1. Best online courses (Coursera, Udemy, Pluralsight, freeCodeCamp, etc.)
-2. Free resources (articles, documentation, tutorials)
-3. Practice platforms (LeetCode, CodePen, real projects)
-4. Communities to join (Discord servers, Reddit, forums)
-5. Estimated learning path duration
+${JSON.stringify(skill_gaps, null, 2)}
 
-Search the web for current, highly-rated resources. Include specific course names and URLs when possible.
-Prioritize quality and practical, hands-on learning.`;
+For each skill gap, suggest:
+1. Top 3 online courses (with platform names like Coursera, Udemy, LinkedIn Learning)
+2. Top 2-3 articles/tutorials (provide realistic titles and sources)
+3. Top 1-2 books (real book titles and authors)
+4. Practice resources (coding challenges, projects, etc.)
+5. Estimated time to proficiency (in weeks)
+6. Learning path (beginner → intermediate → advanced)
 
-    const response = await base44.integrations.Core.InvokeLLM({
-      prompt,
-      add_context_from_internet: true,
+Provide realistic, well-known resources that actually exist.`,
       response_json_schema: {
         type: "object",
         properties: {
-          resources_by_skill: {
+          resources: {
             type: "array",
             items: {
               type: "object",
@@ -44,76 +44,53 @@ Prioritize quality and practical, hands-on learning.`;
                   items: {
                     type: "object",
                     properties: {
-                      name: { type: "string" },
+                      title: { type: "string" },
                       platform: { type: "string" },
-                      url: { type: "string" },
-                      price: { type: "string" },
                       duration: { type: "string" },
-                      rating: { type: "string" }
+                      level: { type: "string" }
                     }
                   }
                 },
-                free_resources: {
+                articles: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
                       title: { type: "string" },
-                      type: { type: "string" },
-                      url: { type: "string" },
-                      description: { type: "string" }
+                      source: { type: "string" }
                     }
                   }
                 },
-                practice_platforms: {
+                books: {
                   type: "array",
                   items: {
                     type: "object",
                     properties: {
-                      name: { type: "string" },
-                      url: { type: "string" },
-                      description: { type: "string" }
+                      title: { type: "string" },
+                      author: { type: "string" }
                     }
                   }
                 },
-                communities: {
+                practice_resources: {
                   type: "array",
                   items: { type: "string" }
                 },
-                learning_path: { type: "string" }
+                estimated_weeks: { type: "number" },
+                learning_path: { type: "array", items: { type: "string" } }
               }
             }
-          },
-          suggested_timeline: { type: "string" },
-          tips: {
-            type: "array",
-            items: { type: "string" }
           }
         }
       }
     });
 
-    // Get relevant opportunities on the platform
-    const opportunities = await base44.entities.Opportunity.filter({ status: 'active' });
-    const practiceOpps = opportunities.filter(o => 
-      skills_to_learn.some(skill => 
-        o.skills_required?.some(s => s.toLowerCase().includes(skill.toLowerCase()))
-      )
-    ).slice(0, 5);
-
     return Response.json({
       success: true,
-      recommendations: response,
-      practice_opportunities: practiceOpps.map(o => ({
-        id: o.id,
-        title: o.title,
-        company: o.company_name,
-        skills: o.skills_required,
-        has_trial: o.has_trial_task
-      }))
+      ...recommendations
     });
+
   } catch (error) {
-    console.error('Error recommending resources:', error);
+    console.error('Learning resources error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
