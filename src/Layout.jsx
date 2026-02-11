@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { 
   Target, User, LogOut, Menu, X, Shield,
-  Home, Search, PlusCircle, Users, ChevronDown, Sparkles, ClipboardList, TrendingUp
+  Home, Search, PlusCircle, Users, ChevronDown, Sparkles, ClipboardList, TrendingUp, MessageSquare
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
@@ -48,6 +48,7 @@ export default function Layout({ children, currentPageName }) {
 
   const userLinks = user ? [
     { name: 'My Dashboard', page: 'CandidateDashboard', icon: User },
+    { name: 'Messages', page: 'Messages', icon: MessageSquare },
     { name: 'Create Opportunity', page: 'CreateOpportunity', icon: PlusCircle },
     { name: 'Applications', page: 'Applications', icon: ClipboardList },
     { name: 'Analytics', page: 'RecruiterAnalytics', icon: TrendingUp },
