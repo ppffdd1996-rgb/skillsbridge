@@ -71,6 +71,7 @@ import Support from './pages/Support';
 import AdminSupport from './pages/AdminSupport';
 import Privacy from './pages/Privacy';
 import Messages from './pages/Messages';
+import EnhancedMatching from './pages/EnhancedMatching';
 import __Layout from './Layout.jsx';
 
 
@@ -99,6 +100,7 @@ export const PAGES = {
     "AdminSupport": AdminSupport,
     "Privacy": Privacy,
     "Messages": Messages,
+    "EnhancedMatching": EnhancedMatching,
 }
 
 export const pagesConfig = {
