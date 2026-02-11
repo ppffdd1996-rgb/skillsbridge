@@ -70,6 +70,7 @@ import HowItWorks from './pages/HowItWorks';
 import Support from './pages/Support';
 import AdminSupport from './pages/AdminSupport';
 import Privacy from './pages/Privacy';
+import Messages from './pages/Messages';
 import __Layout from './Layout.jsx';
 
 
@@ -97,6 +98,7 @@ export const PAGES = {
     "Support": Support,
     "AdminSupport": AdminSupport,
     "Privacy": Privacy,
+    "Messages": Messages,
 }
 
 export const pagesConfig = {
