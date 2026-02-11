@@ -284,9 +284,20 @@ export default function Layout({ children, currentPageName }) {
             <div>
               <h4 className="font-semibold text-gray-900 mb-3">Resources</h4>
               <div className="space-y-2">
-                <a href="#" className="block text-gray-600 hover:text-indigo-600">How It Works</a>
-                <a href="#" className="block text-gray-600 hover:text-indigo-600">Support</a>
-                <a href="#" className="block text-gray-600 hover:text-indigo-600">Privacy</a>
+                <Link to={createPageUrl('HowItWorks')} className="block text-gray-600 hover:text-indigo-600">
+                  How It Works
+                </Link>
+                <Link to={createPageUrl('Support')} className="block text-gray-600 hover:text-indigo-600">
+                  Support
+                </Link>
+                <Link to={createPageUrl('Privacy')} className="block text-gray-600 hover:text-indigo-600">
+                  Privacy
+                </Link>
+                {user?.role === 'admin' && (
+                  <Link to={createPageUrl('AdminSupport')} className="block text-gray-600 hover:text-indigo-600">
+                    Admin Support
+                  </Link>
+                )}
               </div>
             </div>
           </div>
