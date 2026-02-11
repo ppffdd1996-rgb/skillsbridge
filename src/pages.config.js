@@ -73,6 +73,7 @@ import Privacy from './pages/Privacy';
 import Messages from './pages/Messages';
 import EnhancedMatching from './pages/EnhancedMatching';
 import SkillDevelopment from './pages/SkillDevelopment';
+import CompanyProfile from './pages/CompanyProfile';
 import __Layout from './Layout.jsx';
 
 
@@ -103,6 +104,7 @@ export const PAGES = {
     "Messages": Messages,
     "EnhancedMatching": EnhancedMatching,
     "SkillDevelopment": SkillDevelopment,
+    "CompanyProfile": CompanyProfile,
 }
 
 export const pagesConfig = {

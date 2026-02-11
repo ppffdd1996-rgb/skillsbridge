@@ -50,6 +50,7 @@ export default function Layout({ children, currentPageName }) {
   const userLinks = user ? [
     { name: 'My Dashboard', page: 'CandidateDashboard', icon: User },
     { name: 'Messages', page: 'Messages', icon: MessageSquare },
+    { name: 'Company Profile', page: 'CompanyProfile', icon: Home },
     { name: 'Create Opportunity', page: 'CreateOpportunity', icon: PlusCircle },
     { name: 'Applications', page: 'Applications', icon: ClipboardList },
     { name: 'Analytics', page: 'RecruiterAnalytics', icon: TrendingUp },
