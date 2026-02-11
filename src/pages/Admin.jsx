@@ -127,6 +127,30 @@ export default function AdminPage() {
               Refresh
             </Button>
             <Button
+              onClick={async () => {
+                try {
+                  const response = await base44.functions.invoke('downloadAppCode');
+                  const blob = new Blob([JSON.stringify(response.data, null, 2)], { type: 'application/json' });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `skillsbridge-code-${Date.now()}.json`;
+                  document.body.appendChild(a);
+                  a.click();
+                  window.URL.revokeObjectURL(url);
+                  a.remove();
+                  toast.success('App code downloaded');
+                } catch (error) {
+                  toast.error('Failed to download code');
+                }
+              }}
+              variant="outline"
+              className="gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Download Code
+            </Button>
+            <Button
               onClick={generateCSVReport}
               disabled={generatingReport || !report}
               className="gap-2 bg-indigo-600 hover:bg-indigo-700"
