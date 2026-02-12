@@ -45,6 +45,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Matches', page: 'Matches', icon: Users, authRequired: true },
     { name: 'Career Match', page: 'CareerMatch', icon: Sparkles },
     { name: 'Skill Dev', page: 'SkillDevelopment', icon: TrendingUp, authRequired: true },
+    { name: 'All Features', page: 'Features', icon: Target },
   ];
 
   const userLinks = user ? [
