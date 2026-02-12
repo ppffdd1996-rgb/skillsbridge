@@ -14,6 +14,7 @@ import UserManagement from '@/components/admin/UserManagement';
 import AIConfigPanel from '@/components/admin/AIConfigPanel';
 import HiringFunnelChart from '@/components/admin/HiringFunnelChart';
 import PlatformMetrics from '@/components/admin/PlatformMetrics';
+import AdvancedReporting from '@/components/admin/AdvancedReporting';
 import { toast } from 'sonner';
 
 export default function AdminPage() {
@@ -172,9 +173,10 @@ export default function AdminPage() {
           </div>
         ) : report ? (
           <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="funnel">Hiring Funnel</TabsTrigger>
+              <TabsTrigger value="reports">Advanced Reports</TabsTrigger>
               <TabsTrigger value="users">Users</TabsTrigger>
               <TabsTrigger value="ai">AI Config</TabsTrigger>
               <TabsTrigger value="metrics">Metrics</TabsTrigger>
@@ -301,6 +303,10 @@ export default function AdminPage() {
 
             <TabsContent value="funnel">
               <HiringFunnelChart data={report.hiring_funnel} conversionRates={report.conversion_rates} />
+            </TabsContent>
+
+            <TabsContent value="reports">
+              <AdvancedReporting />
             </TabsContent>
 
             <TabsContent value="users">
