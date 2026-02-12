@@ -74,6 +74,7 @@ import Messages from './pages/Messages';
 import EnhancedMatching from './pages/EnhancedMatching';
 import SkillDevelopment from './pages/SkillDevelopment';
 import CompanyProfile from './pages/CompanyProfile';
+import AdminHome from './pages/AdminHome';
 import __Layout from './Layout.jsx';
 
 
@@ -105,6 +106,7 @@ export const PAGES = {
     "EnhancedMatching": EnhancedMatching,
     "SkillDevelopment": SkillDevelopment,
     "CompanyProfile": CompanyProfile,
+    "AdminHome": AdminHome,
 }
 
 export const pagesConfig = {
