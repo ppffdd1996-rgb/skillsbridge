@@ -1,0 +1,127 @@
+{
+  "name": "Scorecard",
+  "type": "object",
+  "properties": {
+    "interview_id": {
+      "type": "string",
+      "description": "Associated interview ID"
+    },
+    "application_id": {
+      "type": "string",
+      "description": "Associated application ID"
+    },
+    "opportunity_id": {
+      "type": "string",
+      "description": "Associated opportunity ID"
+    },
+    "opportunity_title": {
+      "type": "string",
+      "description": "Opportunity title (denormalized)"
+    },
+    "candidate_email": {
+      "type": "string",
+      "description": "Candidate email"
+    },
+    "candidate_name": {
+      "type": "string",
+      "description": "Candidate name (denormalized)"
+    },
+    "recruiter_email": {
+      "type": "string",
+      "description": "Recruiter who submitted the scorecard"
+    },
+    "recruiter_name": {
+      "type": "string",
+      "description": "Recruiter name (denormalized)"
+    },
+    "criteria_scores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "technical_skill",
+              "problem_solving",
+              "communication",
+              "culture_fit",
+              "experience",
+              "leadership",
+              "teamwork",
+              "adaptability",
+              "motivation",
+              "other"
+            ]
+          },
+          "category_label": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "description": "Rating 1-5"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Individual criteria ratings"
+    },
+    "overall_score": {
+      "type": "number",
+      "description": "Computed average score (1-5)"
+    },
+    "overall_recommendation": {
+      "type": "string",
+      "enum": [
+        "strong_no",
+        "no",
+        "neutral",
+        "yes",
+        "strong_yes"
+      ],
+      "description": "Overall hire recommendation"
+    },
+    "strengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Candidate strengths noted"
+    },
+    "concerns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Concerns or areas to improve"
+    },
+    "general_notes": {
+      "type": "string",
+      "description": "General comments"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "submitted"
+      ],
+      "default": "draft",
+      "description": "Scorecard status"
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When scorecard was submitted"
+    }
+  },
+  "required": [
+    "interview_id",
+    "candidate_email",
+    "recruiter_email"
+  ]
+}
