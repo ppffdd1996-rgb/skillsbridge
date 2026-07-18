@@ -14,6 +14,7 @@ import CandidateRankingsPage from './pages/CandidateRankings';
 import OfferManagementPage from './pages/OfferManagement';
 import InterviewFeedbackPage from './pages/InterviewFeedback';
 import CandidateOnboardingPage from './pages/CandidateOnboarding';
+import CommunityPage from './pages/Community';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -98,6 +99,11 @@ const AuthenticatedApp = () => {
       <Route path="/CandidateOnboarding" element={
         <LayoutWrapper currentPageName="CandidateOnboarding">
           <CandidateOnboardingPage />
+        </LayoutWrapper>
+      } />
+      <Route path="/Community" element={
+        <LayoutWrapper currentPageName="Community">
+          <CommunityPage />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />

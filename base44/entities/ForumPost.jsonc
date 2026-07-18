@@ -1,0 +1,75 @@
+{
+  "name": "ForumPost",
+  "type": "object",
+  "properties": {
+    "forum_id": {
+      "type": "string",
+      "description": "Associated forum ID"
+    },
+    "forum_name": {
+      "type": "string",
+      "description": "Forum name (denormalized)"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Post author email"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Author name"
+    },
+    "title": {
+      "type": "string",
+      "description": "Post title"
+    },
+    "content": {
+      "type": "string",
+      "description": "Post body content"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "career_growth",
+        "advice",
+        "success_story",
+        "question",
+        "resource",
+        "networking"
+      ],
+      "default": "discussion",
+      "description": "Post category"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Post tags"
+    },
+    "likes_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of likes"
+    },
+    "replies_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of replies"
+    },
+    "liked_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Emails of users who liked"
+    }
+  },
+  "required": [
+    "forum_id",
+    "author_email",
+    "title",
+    "content"
+  ]
+}

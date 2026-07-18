@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { 
   Target, User, LogOut, Menu, X, Shield,
-  Home, Search, PlusCircle, Users, ChevronDown, Sparkles, ClipboardList, ClipboardCheck, TrendingUp, MessageSquare, Trophy, FileText, PartyPopper
+  Home, Search, PlusCircle, Users, ChevronDown, Sparkles, ClipboardList, ClipboardCheck, TrendingUp, MessageSquare, Trophy, FileText, PartyPopper, Globe
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
@@ -44,6 +44,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Search', page: 'Opportunities', icon: Search },
     { name: 'Matches', page: 'Matches', icon: Users, authRequired: true },
     { name: 'Career Match', page: 'CareerMatch', icon: Sparkles },
+    { name: 'Community', page: 'Community', icon: Globe, authRequired: true },
     { name: 'Skill Dev', page: 'SkillDevelopment', icon: TrendingUp, authRequired: true },
     { name: 'All Features', page: 'Features', icon: Target },
   ];

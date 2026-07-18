@@ -1,0 +1,70 @@
+{
+  "name": "Forum",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Forum name"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Industry this forum focuses on"
+    },
+    "description": {
+      "type": "string",
+      "description": "Forum description"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "career_advice",
+        "industry_discussion",
+        "networking",
+        "job_search",
+        "skill_development"
+      ],
+      "default": "industry_discussion",
+      "description": "Forum category"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Relevant tags"
+    },
+    "created_by_email": {
+      "type": "string",
+      "description": "Creator email"
+    },
+    "created_by_name": {
+      "type": "string",
+      "description": "Creator name"
+    },
+    "member_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of members"
+    },
+    "post_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of posts"
+    },
+    "color": {
+      "type": "string",
+      "default": "indigo",
+      "description": "Theme color for the forum card"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether forum is active"
+    }
+  },
+  "required": [
+    "name",
+    "industry"
+  ]
+}

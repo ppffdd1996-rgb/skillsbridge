@@ -1,0 +1,31 @@
+{
+  "name": "ForumMembership",
+  "type": "object",
+  "properties": {
+    "forum_id": {
+      "type": "string",
+      "description": "Associated forum ID"
+    },
+    "forum_name": {
+      "type": "string",
+      "description": "Forum name (denormalized)"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Member email"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Member name"
+    },
+    "joined_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the user joined"
+    }
+  },
+  "required": [
+    "forum_id",
+    "user_email"
+  ]
+}

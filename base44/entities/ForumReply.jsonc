@@ -1,0 +1,44 @@
+{
+  "name": "ForumReply",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string",
+      "description": "Associated post ID"
+    },
+    "forum_id": {
+      "type": "string",
+      "description": "Associated forum ID"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Reply author email"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Author name"
+    },
+    "content": {
+      "type": "string",
+      "description": "Reply content"
+    },
+    "likes_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of likes"
+    },
+    "liked_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Emails of users who liked"
+    }
+  },
+  "required": [
+    "post_id",
+    "author_email",
+    "content"
+  ]
+}
