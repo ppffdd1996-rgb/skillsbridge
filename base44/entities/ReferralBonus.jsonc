@@ -1,0 +1,87 @@
+{
+  "name": "ReferralBonus",
+  "type": "object",
+  "properties": {
+    "referral_id": {
+      "type": "string",
+      "description": "Associated referral ID"
+    },
+    "referrer_email": {
+      "type": "string",
+      "description": "Email of the referrer earning the bonus"
+    },
+    "referrer_name": {
+      "type": "string",
+      "description": "Referrer name (denormalized)"
+    },
+    "candidate_email": {
+      "type": "string",
+      "description": "Referred candidate email"
+    },
+    "candidate_name": {
+      "type": "string",
+      "description": "Referred candidate name (denormalized)"
+    },
+    "opportunity_id": {
+      "type": "string",
+      "description": "Opportunity the candidate was hired for"
+    },
+    "opportunity_title": {
+      "type": "string",
+      "description": "Opportunity title (denormalized)"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Company name (denormalized)"
+    },
+    "bonus_amount": {
+      "type": "number",
+      "default": 1000,
+      "description": "Bonus amount in currency"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD",
+      "description": "Bonus currency code"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "paid",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Bonus lifecycle status"
+    },
+    "awarded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When bonus was auto-awarded (candidate hired)"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When admin approved the bonus"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Admin email who approved"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When bonus was paid out"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes about the bonus"
+    }
+  },
+  "required": [
+    "referral_id",
+    "referrer_email",
+    "candidate_email"
+  ]
+}
