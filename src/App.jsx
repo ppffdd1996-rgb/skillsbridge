@@ -11,6 +11,7 @@ import ReferralsPage from './pages/Referrals';
 import ScorecardsPage from './pages/Scorecards';
 import ReferralProgramPage from './pages/ReferralProgram';
 import CandidateRankingsPage from './pages/CandidateRankings';
+import OfferManagementPage from './pages/OfferManagement';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -80,6 +81,11 @@ const AuthenticatedApp = () => {
       <Route path="/CandidateRankings" element={
         <LayoutWrapper currentPageName="CandidateRankings">
           <CandidateRankingsPage />
+        </LayoutWrapper>
+      } />
+      <Route path="/OfferManagement" element={
+        <LayoutWrapper currentPageName="OfferManagement">
+          <OfferManagementPage />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />
