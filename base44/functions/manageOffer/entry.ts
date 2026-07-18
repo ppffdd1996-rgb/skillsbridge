@@ -114,6 +114,66 @@ Deno.serve(async (req) => {
       return Response.json({ success: true, offer: updated });
     }
 
+    // BENCHMARK: compare offer salary against market data via LLM with web context
+    if (action === 'benchmark') {
+      const { job_title, salary, location } = body;
+      if (!job_title || !salary) return Response.json({ error: 'job_title and salary required' }, { status: 400 });
+
+      // Parse numeric salary from strings like "$90,000" or "90000 USD"
+      const numericSalary = parseFloat(String(salary).replace(/[^0-9.]/g, ''));
+
+      let analysis = null;
+      try {
+        const llm = await base44.asServiceRole.integrations.Core.InvokeLLM({
+          prompt: `You are a compensation analyst. Research current market salary data for the role: "${job_title}"${location ? ' in ' + location : ''}.
+
+I'm considering offering a salary of ${salary} (parsed numeric value: ${isNaN(numericSalary) ? 'unknown' : numericSalary}).
+
+Return a JSON object with:
+- market_low: numeric lower bound of typical salary range (USD annual)
+- market_median: numeric median market salary (USD annual)
+- market_high: numeric upper bound (USD annual)
+- percentile: the percentile at which the offered salary sits (0-100 number; e.g. 75 means the offer is higher than 75% of market)
+- competitiveness: one of "below_market", "at_market", "above_market"
+- recommendation: one of "increase_offer", "competitive", "consider_reduction"
+- summary: a 2-3 sentence plain-English explanation comparing the offer to market benchmarks and whether it's competitive.
+- similar_roles: an array of 3 objects {title, median_salary} of comparable roles and their typical median salaries.
+
+Base numbers on current real market data from the web.`,
+          add_context_from_internet: true,
+          model: 'gemini_3_flash',
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              market_low: { type: 'number' },
+              market_median: { type: 'number' },
+              market_high: { type: 'number' },
+              percentile: { type: 'number' },
+              competitiveness: { type: 'string' },
+              recommendation: { type: 'string' },
+              summary: { type: 'string' },
+              similar_roles: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    title: { type: 'string' },
+                    median_salary: { type: 'number' }
+                  }
+                }
+              }
+            }
+          }
+        });
+        analysis = llm;
+      } catch (e) {
+        console.log('Benchmark LLM failed:', e?.message || e);
+      }
+
+      if (!analysis) return Response.json({ error: 'Failed to retrieve market data' }, { status: 502 });
+      return Response.json({ success: true, job_title, salary, location, analysis });
+    }
+
     return Response.json({ error: 'Unknown action' }, { status: 400 });
   } catch (error) {
     console.error('manageOffer error:', error);

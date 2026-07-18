@@ -1,0 +1,126 @@
+{
+  "name": "InterviewFeedback",
+  "type": "object",
+  "properties": {
+    "interview_id": {
+      "type": "string",
+      "description": "Associated interview ID"
+    },
+    "application_id": {
+      "type": "string",
+      "description": "Associated application ID"
+    },
+    "opportunity_id": {
+      "type": "string",
+      "description": "Associated opportunity ID"
+    },
+    "opportunity_title": {
+      "type": "string",
+      "description": "Opportunity title (denormalized)"
+    },
+    "candidate_email": {
+      "type": "string",
+      "description": "Candidate email"
+    },
+    "candidate_name": {
+      "type": "string",
+      "description": "Candidate name (denormalized)"
+    },
+    "recruiter_email": {
+      "type": "string",
+      "description": "Recruiter who conducted the interview"
+    },
+    "recruiter_name": {
+      "type": "string",
+      "description": "Recruiter name (denormalized)"
+    },
+    "interview_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the interview took place"
+    },
+    "job_title": {
+      "type": "string",
+      "description": "Job title interviewed for (denormalized)"
+    },
+    "overall_rating": {
+      "type": "number",
+      "description": "Candidate's overall experience rating (1-5)"
+    },
+    "communication_rating": {
+      "type": "number",
+      "description": "Rating of recruiter's communication (1-5)"
+    },
+    "professionalism_rating": {
+      "type": "number",
+      "description": "Rating of professionalism (1-5)"
+    },
+    "difficulty_rating": {
+      "type": "number",
+      "description": "Candidate's perceived difficulty (1-5)"
+    },
+    "would_recommend": {
+      "type": "boolean",
+      "description": "Whether candidate would recommend the company to others"
+    },
+    "candidate_comments": {
+      "type": "string",
+      "description": "Candidate's open feedback about the experience"
+    },
+    "most_positive_aspect": {
+      "type": "string",
+      "description": "What the candidate found most positive"
+    },
+    "improvement_suggestions": {
+      "type": "string",
+      "description": "Candidate suggestions for improvement"
+    },
+    "recruiter_notes": {
+      "type": "string",
+      "description": "Recruiter's qualitative notes about the candidate"
+    },
+    "strengths_observed": {
+      "type": "string",
+      "description": "Recruiter's notes on candidate strengths"
+    },
+    "concerns_observed": {
+      "type": "string",
+      "description": "Recruiter's notes on concerns"
+    },
+    "qualitative_summary": {
+      "type": "string",
+      "description": "AI-generated summary combining candidate feedback and recruiter notes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "candidate_submitted",
+        "recruiter_noted",
+        "completed"
+      ],
+      "default": "pending",
+      "description": "Feedback lifecycle status"
+    },
+    "candidate_submitted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When candidate submitted feedback"
+    },
+    "recruiter_noted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When recruiter saved qualitative notes"
+    },
+    "feedback_request_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether candidate feedback request email was sent"
+    }
+  },
+  "required": [
+    "interview_id",
+    "candidate_email",
+    "recruiter_email"
+  ]
+}

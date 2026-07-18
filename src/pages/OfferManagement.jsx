@@ -15,6 +15,7 @@ import {
   FileText, Send, CheckCircle2, XCircle, Clock, TrendingUp,
   Loader2, Plus, Award, Percent, Users, Briefcase, Mail
 } from 'lucide-react';
+import SalaryBenchmarkDialog from '@/components/offers/SalaryBenchmarkDialog';
 
 const SIGNATURE_CONFIG = {
   pending: { label: 'Pending', color: 'gray', icon: Clock },
@@ -274,6 +275,7 @@ export default function OfferManagementPage() {
                       <div className="flex flex-col items-end gap-2">
                         <Badge className={`bg-${cfg.color}-100 text-${cfg.color}-800`}>{cfg.label}</Badge>
                         <div className="flex gap-2">
+                          {offer.salary && <SalaryBenchmarkDialog offer={offer} />}
                           {offer.signature_status === 'pending' && (
                             <Button size="sm" variant="outline" onClick={() => statusMutation.mutate({ offer_id: offer.id, signature_status: 'sent' })}>Mark Sent</Button>
                           )}
