@@ -1,0 +1,94 @@
+{
+  "name": "AdvancedReport",
+  "type": "object",
+  "properties": {
+    "report_name": {
+      "type": "string",
+      "description": "Name of the custom report"
+    },
+    "report_type": {
+      "type": "string",
+      "enum": [
+        "diversity_metrics",
+        "source_effectiveness",
+        "offer_acceptance",
+        "time_to_hire",
+        "funnel_performance",
+        "recruiter_performance",
+        "custom"
+      ],
+      "description": "Type of report"
+    },
+    "filters": {
+      "type": "object",
+      "properties": {
+        "start_date": {
+          "type": "string"
+        },
+        "end_date": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "departments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recruiters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Report filters"
+    },
+    "data": {
+      "type": "object",
+      "properties": {},
+      "description": "Report data and metrics"
+    },
+    "insights": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "AI-generated insights"
+    },
+    "predictions": {
+      "type": "object",
+      "properties": {},
+      "description": "Predictive analytics results"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Admin who created report"
+    },
+    "is_scheduled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether report runs on schedule"
+    },
+    "schedule_frequency": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly",
+        "quarterly"
+      ],
+      "description": "Schedule frequency"
+    }
+  },
+  "required": [
+    "report_name",
+    "report_type"
+  ]
+}

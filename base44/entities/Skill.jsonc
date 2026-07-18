@@ -1,0 +1,63 @@
+{
+  "name": "Skill",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who owns this skill"
+    },
+    "name": {
+      "type": "string",
+      "description": "Skill name"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "learning",
+        "competent",
+        "proficient",
+        "verified"
+      ],
+      "default": "competent",
+      "description": "Skill proficiency level"
+    },
+    "proof_url": {
+      "type": "string",
+      "description": "Link to work sample or proof"
+    },
+    "proof_type": {
+      "type": "string",
+      "enum": [
+        "portfolio",
+        "github",
+        "demo",
+        "certification",
+        "task_completion"
+      ],
+      "description": "Type of proof"
+    },
+    "verified_by": {
+      "type": "string",
+      "enum": [
+        "self",
+        "system",
+        "peer",
+        "expert"
+      ],
+      "default": "self"
+    },
+    "verification_score": {
+      "type": "number",
+      "description": "AI-assessed skill score (0-100)"
+    },
+    "years_experience": {
+      "type": "number",
+      "description": "Years of experience with this skill"
+    }
+  },
+  "required": [
+    "user_email",
+    "name",
+    "level"
+  ]
+}

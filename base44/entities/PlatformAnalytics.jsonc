@@ -1,0 +1,62 @@
+{
+  "name": "PlatformAnalytics",
+  "type": "object",
+  "properties": {
+    "metric_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the metric"
+    },
+    "active_users": {
+      "type": "number",
+      "default": 0,
+      "description": "Daily active users"
+    },
+    "new_registrations": {
+      "type": "number",
+      "default": 0,
+      "description": "New user registrations"
+    },
+    "total_opportunities": {
+      "type": "number",
+      "default": 0,
+      "description": "Total opportunities posted"
+    },
+    "total_applications": {
+      "type": "number",
+      "default": 0,
+      "description": "Total applications submitted"
+    },
+    "interviews_scheduled": {
+      "type": "number",
+      "default": 0,
+      "description": "Interviews scheduled"
+    },
+    "offers_sent": {
+      "type": "number",
+      "default": 0,
+      "description": "Offers sent"
+    },
+    "hires_completed": {
+      "type": "number",
+      "default": 0,
+      "description": "Hires completed"
+    },
+    "avg_time_to_hire_days": {
+      "type": "number",
+      "description": "Average time to hire in days"
+    },
+    "candidate_engagement_rate": {
+      "type": "number",
+      "description": "Percentage of engaged candidates"
+    },
+    "skill_verifications": {
+      "type": "number",
+      "default": 0,
+      "description": "Skills verified by AI"
+    }
+  },
+  "required": [
+    "metric_date"
+  ]
+}

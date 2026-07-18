@@ -1,0 +1,42 @@
+{
+  "name": "Onboarding",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User's email"
+    },
+    "current_step": {
+      "type": "number",
+      "default": 0,
+      "description": "Current onboarding step (0-4)"
+    },
+    "completed_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of completed step IDs"
+    },
+    "profile_complete": {
+      "type": "boolean",
+      "default": false
+    },
+    "first_opportunity_created": {
+      "type": "boolean",
+      "default": false
+    },
+    "completed": {
+      "type": "boolean",
+      "default": false
+    },
+    "skipped": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

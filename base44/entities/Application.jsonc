@@ -1,0 +1,155 @@
+{
+  "name": "Application",
+  "type": "object",
+  "properties": {
+    "opportunity_id": {
+      "type": "string",
+      "description": "ID of the opportunity being applied to"
+    },
+    "applicant_email": {
+      "type": "string",
+      "description": "Email of the applicant"
+    },
+    "applicant_name": {
+      "type": "string",
+      "description": "Name of the applicant"
+    },
+    "cover_letter": {
+      "type": "string",
+      "description": "Applicant's cover letter"
+    },
+    "resume_url": {
+      "type": "string",
+      "description": "URL to applicant's resume"
+    },
+    "portfolio_url": {
+      "type": "string",
+      "description": "URL to applicant's portfolio"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "applied",
+        "screening",
+        "interviewing",
+        "offered",
+        "rejected",
+        "hired"
+      ],
+      "default": "applied",
+      "description": "Application status"
+    },
+    "match_score": {
+      "type": "number",
+      "description": "AI-calculated match score (0-100)"
+    },
+    "ai_summary": {
+      "type": "string",
+      "description": "AI-generated summary of qualifications"
+    },
+    "screening_notes": {
+      "type": "string",
+      "description": "AI screening analysis"
+    },
+    "strengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Identified strengths"
+    },
+    "concerns": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Potential concerns or gaps"
+    },
+    "recruiter_notes": {
+      "type": "string",
+      "description": "Manual notes from recruiter"
+    },
+    "interview_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled interview date"
+    },
+    "technical_assessment": {
+      "type": "object",
+      "properties": {
+        "challenge": {
+          "type": "string"
+        },
+        "submitted": {
+          "type": "boolean"
+        },
+        "submission": {
+          "type": "string"
+        },
+        "ai_score": {
+          "type": "number"
+        },
+        "ai_feedback": {
+          "type": "string"
+        },
+        "submitted_at": {
+          "type": "string"
+        }
+      },
+      "description": "Technical assessment data"
+    },
+    "behavioral_assessment": {
+      "type": "object",
+      "properties": {
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "responses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ai_analysis": {
+          "type": "object"
+        }
+      },
+      "description": "Behavioral assessment data"
+    },
+    "skill_verifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "skill": {
+            "type": "string"
+          },
+          "claimed_level": {
+            "type": "string"
+          },
+          "evidence_url": {
+            "type": "string"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "ai_verification_score": {
+            "type": "number"
+          },
+          "ai_notes": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Skill verification results"
+    }
+  },
+  "required": [
+    "opportunity_id",
+    "applicant_email",
+    "applicant_name"
+  ]
+}

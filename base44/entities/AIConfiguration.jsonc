@@ -1,0 +1,63 @@
+{
+  "name": "AIConfiguration",
+  "type": "object",
+  "properties": {
+    "config_name": {
+      "type": "string",
+      "description": "Configuration name"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "matching",
+        "skill_verification",
+        "interview_analysis",
+        "onboarding",
+        "general"
+      ],
+      "description": "AI feature category"
+    },
+    "match_threshold": {
+      "type": "number",
+      "description": "Minimum match score (0-1)"
+    },
+    "skill_verification_threshold": {
+      "type": "number",
+      "description": "Skill verification pass score"
+    },
+    "auto_screen_applications": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable auto screening"
+    },
+    "auto_schedule_interviews": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable auto scheduling"
+    },
+    "enable_ai_interview_questions": {
+      "type": "boolean",
+      "default": true,
+      "description": "Generate AI interview questions"
+    },
+    "max_daily_verifications": {
+      "type": "number",
+      "default": 100,
+      "description": "Daily AI verification limit"
+    },
+    "custom_prompts": {
+      "type": "object",
+      "properties": {},
+      "description": "Custom AI prompts by feature"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether config is active"
+    }
+  },
+  "required": [
+    "config_name",
+    "category"
+  ]
+}

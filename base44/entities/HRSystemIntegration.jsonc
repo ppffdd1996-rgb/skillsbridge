@@ -1,0 +1,99 @@
+{
+  "name": "HRSystemIntegration",
+  "type": "object",
+  "properties": {
+    "system_type": {
+      "type": "string",
+      "enum": [
+        "workday",
+        "bamboohr",
+        "gusto",
+        "rippling",
+        "custom"
+      ],
+      "description": "Type of HR system"
+    },
+    "system_name": {
+      "type": "string",
+      "description": "Custom name for this integration"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether integration is enabled"
+    },
+    "api_endpoint": {
+      "type": "string",
+      "description": "API base URL"
+    },
+    "credentials_encrypted": {
+      "type": "string",
+      "description": "Encrypted API credentials"
+    },
+    "sync_settings": {
+      "type": "object",
+      "properties": {
+        "auto_create_employee": {
+          "type": "boolean",
+          "default": true
+        },
+        "auto_sync_payroll": {
+          "type": "boolean",
+          "default": true
+        },
+        "auto_sync_benefits": {
+          "type": "boolean",
+          "default": true
+        },
+        "sync_frequency": {
+          "type": "string",
+          "enum": [
+            "realtime",
+            "daily",
+            "weekly"
+          ],
+          "default": "realtime"
+        }
+      },
+      "description": "Sync configuration"
+    },
+    "field_mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "local_field": {
+            "type": "string"
+          },
+          "remote_field": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Custom field mappings"
+    },
+    "last_sync": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last sync timestamp"
+    },
+    "sync_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "pending",
+        "error"
+      ],
+      "default": "active"
+    },
+    "error_log": {
+      "type": "string",
+      "description": "Last sync error message"
+    }
+  },
+  "required": [
+    "system_type",
+    "system_name"
+  ]
+}

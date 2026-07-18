@@ -1,0 +1,181 @@
+{
+  "name": "PersonalizedOnboardingPlan",
+  "type": "object",
+  "properties": {
+    "employee_email": {
+      "type": "string",
+      "description": "Employee email"
+    },
+    "employee_name": {
+      "type": "string",
+      "description": "Employee name"
+    },
+    "role": {
+      "type": "string",
+      "description": "Job role/position"
+    },
+    "department": {
+      "type": "string",
+      "description": "Department"
+    },
+    "user_type": {
+      "type": "string",
+      "enum": [
+        "employer",
+        "candidate"
+      ],
+      "description": "User type from onboarding"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Start date"
+    },
+    "personalized_tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "scheduled_date": {
+            "type": "string"
+          },
+          "assigned_to": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "AI-generated personalized tasks"
+    },
+    "welcome_message": {
+      "type": "string",
+      "description": "Personalized welcome message"
+    },
+    "team_introductions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "introduction": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Personalized team member introductions"
+    },
+    "skill_gaps_identified": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Identified skill gaps"
+    },
+    "recommended_training": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "resource_url": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "estimated_hours": {
+            "type": "number"
+          },
+          "skills_addressed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "default": [],
+      "description": "AI-recommended training resources"
+    },
+    "onboarding_buddy": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "description": "Assigned onboarding buddy"
+    },
+    "milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "target_date": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "default": [],
+      "description": "Onboarding milestones"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "completed"
+      ],
+      "default": "pending",
+      "description": "Onboarding plan status"
+    }
+  },
+  "required": [
+    "employee_email",
+    "employee_name",
+    "role",
+    "department"
+  ]
+}

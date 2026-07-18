@@ -1,0 +1,198 @@
+{
+  "name": "SkillVerificationReport",
+  "type": "object",
+  "properties": {
+    "skill_id": {
+      "type": "string",
+      "description": "Associated skill ID"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Skill owner email"
+    },
+    "skill_name": {
+      "type": "string",
+      "description": "Skill name"
+    },
+    "verification_type": {
+      "type": "string",
+      "enum": [
+        "portfolio_analysis",
+        "github_analysis",
+        "project_review",
+        "certification_validation",
+        "combined"
+      ],
+      "description": "Type of verification performed"
+    },
+    "evidence_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "URLs analyzed for verification"
+    },
+    "proficiency_score": {
+      "type": "number",
+      "description": "Overall proficiency score (0-100)"
+    },
+    "assessed_level": {
+      "type": "string",
+      "enum": [
+        "learning",
+        "competent",
+        "proficient",
+        "expert"
+      ],
+      "description": "AI-assessed skill level"
+    },
+    "analysis_summary": {
+      "type": "string",
+      "description": "Overall analysis summary"
+    },
+    "strengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Identified strengths"
+    },
+    "areas_for_improvement": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Areas needing improvement"
+    },
+    "projects_analyzed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "technologies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "complexity_score": {
+            "type": "number"
+          },
+          "insights": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Details of analyzed projects"
+    },
+    "github_stats": {
+      "type": "object",
+      "properties": {
+        "total_repos": {
+          "type": "number"
+        },
+        "total_commits": {
+          "type": "number"
+        },
+        "languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contribution_frequency": {
+          "type": "string"
+        },
+        "code_quality_score": {
+          "type": "number"
+        }
+      },
+      "description": "GitHub activity analysis"
+    },
+    "certifications_validated": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "issued_date": {
+            "type": "string"
+          },
+          "expiry_date": {
+            "type": "string"
+          },
+          "verification_url": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Validated certifications"
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "verified",
+        "partially_verified",
+        "unverified",
+        "pending"
+      ],
+      "default": "pending",
+      "description": "Verification status"
+    },
+    "confidence_level": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "description": "Confidence in verification"
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Recommendations for skill development"
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When verification was completed"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When verification expires"
+    }
+  },
+  "required": [
+    "skill_id",
+    "user_email",
+    "skill_name",
+    "verification_type"
+  ]
+}

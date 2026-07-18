@@ -1,0 +1,78 @@
+{
+  "name": "ScheduledEmail",
+  "type": "object",
+  "properties": {
+    "to": {
+      "type": "string",
+      "description": "Recipient email address"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Email subject"
+    },
+    "body": {
+      "type": "string",
+      "description": "Email body content"
+    },
+    "scheduledTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When to send the email"
+    },
+    "cc": {
+      "type": "string",
+      "description": "CC recipients"
+    },
+    "bcc": {
+      "type": "string",
+      "description": "BCC recipients"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "fileUrl": {
+            "type": "string"
+          },
+          "fileName": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Files to attach"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "failed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Email status"
+    },
+    "sentAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When email was actually sent"
+    },
+    "attempts": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of send attempts"
+    },
+    "lastError": {
+      "type": "string",
+      "description": "Error message from last failed attempt"
+    }
+  },
+  "required": [
+    "to",
+    "subject",
+    "body",
+    "scheduledTime"
+  ]
+}

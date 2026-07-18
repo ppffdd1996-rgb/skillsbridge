@@ -1,0 +1,74 @@
+{
+  "name": "MatchConfiguration",
+  "type": "object",
+  "properties": {
+    "opportunity_id": {
+      "type": "string",
+      "description": "Associated opportunity ID"
+    },
+    "recruiter_email": {
+      "type": "string",
+      "description": "Recruiter who created config"
+    },
+    "skill_weight": {
+      "type": "number",
+      "default": 0.4,
+      "description": "Weight for skill matching (0-1)"
+    },
+    "experience_weight": {
+      "type": "number",
+      "default": 0.3,
+      "description": "Weight for experience level (0-1)"
+    },
+    "education_weight": {
+      "type": "number",
+      "default": 0.1,
+      "description": "Weight for education (0-1)"
+    },
+    "portfolio_weight": {
+      "type": "number",
+      "default": 0.2,
+      "description": "Weight for portfolio/proof (0-1)"
+    },
+    "required_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Must-have skills"
+    },
+    "preferred_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Nice-to-have skills"
+    },
+    "min_experience_years": {
+      "type": "number",
+      "description": "Minimum years of experience"
+    },
+    "preferred_experience_level": {
+      "type": "string",
+      "enum": [
+        "entry",
+        "mid",
+        "senior",
+        "lead",
+        "executive"
+      ],
+      "description": "Preferred experience level"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether config is active"
+    }
+  },
+  "required": [
+    "opportunity_id",
+    "recruiter_email"
+  ]
+}

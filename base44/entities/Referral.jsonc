@@ -1,0 +1,109 @@
+{
+  "name": "Referral",
+  "type": "object",
+  "properties": {
+    "referrer_email": {
+      "type": "string",
+      "description": "Email of the user making the referral"
+    },
+    "referrer_name": {
+      "type": "string",
+      "description": "Name of the referrer"
+    },
+    "candidate_email": {
+      "type": "string",
+      "description": "Email of the referred candidate"
+    },
+    "candidate_name": {
+      "type": "string",
+      "description": "Name of the referred candidate"
+    },
+    "opportunity_id": {
+      "type": "string",
+      "description": "Associated opportunity ID"
+    },
+    "opportunity_title": {
+      "type": "string",
+      "description": "Title of the opportunity (denormalized for display)"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Company name (denormalized)"
+    },
+    "referral_message": {
+      "type": "string",
+      "description": "Personal message from referrer to candidate"
+    },
+    "relationship": {
+      "type": "string",
+      "enum": [
+        "colleague",
+        "friend",
+        "classmate",
+        "former_coworker",
+        "mentor",
+        "other"
+      ],
+      "default": "colleague",
+      "description": "How referrer knows the candidate"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "invited",
+        "viewed",
+        "applied",
+        "interviewing",
+        "offered",
+        "hired",
+        "rejected",
+        "expired"
+      ],
+      "default": "invited",
+      "description": "Status of the referral"
+    },
+    "candidate_application_id": {
+      "type": "string",
+      "description": "Linked application ID if candidate applied"
+    },
+    "reward_eligible": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether referral qualifies for a reward (hired)"
+    },
+    "reward_paid": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether reward has been paid out"
+    },
+    "recruiter_email": {
+      "type": "string",
+      "description": "Recruiter who owns the opportunity"
+    },
+    "invited_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When referral invitation was sent"
+    },
+    "applied_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When candidate applied"
+    },
+    "hired_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When candidate was hired"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes"
+    }
+  },
+  "required": [
+    "referrer_email",
+    "candidate_email",
+    "candidate_name",
+    "opportunity_id"
+  ]
+}

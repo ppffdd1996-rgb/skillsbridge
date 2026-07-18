@@ -1,0 +1,60 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "conversation_id": {
+      "type": "string",
+      "description": "Associated conversation ID"
+    },
+    "application_id": {
+      "type": "string",
+      "description": "Associated application ID"
+    },
+    "opportunity_id": {
+      "type": "string",
+      "description": "Associated opportunity ID"
+    },
+    "sender_email": {
+      "type": "string",
+      "description": "Sender's email"
+    },
+    "recipient_email": {
+      "type": "string",
+      "description": "Recipient's email"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Email/message subject"
+    },
+    "body": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "email",
+        "notification",
+        "system",
+        "chat"
+      ],
+      "default": "email",
+      "description": "Message type"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether recipient has read the message"
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When message was read"
+    }
+  },
+  "required": [
+    "sender_email",
+    "recipient_email",
+    "body"
+  ]
+}

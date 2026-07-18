@@ -1,0 +1,65 @@
+{
+  "name": "HRDocument",
+  "type": "object",
+  "properties": {
+    "employee_email": {
+      "type": "string",
+      "description": "Employee email address"
+    },
+    "employee_name": {
+      "type": "string",
+      "description": "Employee full name"
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "employment_contract",
+        "nda",
+        "handbook_acknowledgment",
+        "tax_form",
+        "insurance_form",
+        "emergency_contact",
+        "direct_deposit"
+      ],
+      "description": "Type of HR document"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to the generated document"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "generated",
+        "sent",
+        "acknowledged",
+        "completed"
+      ],
+      "default": "generated",
+      "description": "Document status"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When document was sent"
+    },
+    "acknowledged_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When employee acknowledged"
+    },
+    "content": {
+      "type": "string",
+      "description": "Document content/template"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "employee_email",
+    "employee_name",
+    "document_type"
+  ]
+}

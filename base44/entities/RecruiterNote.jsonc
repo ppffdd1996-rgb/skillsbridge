@@ -1,0 +1,51 @@
+{
+  "name": "RecruiterNote",
+  "type": "object",
+  "properties": {
+    "application_id": {
+      "type": "string",
+      "description": "Associated application ID"
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Recruiter who wrote the note"
+    },
+    "note": {
+      "type": "string",
+      "description": "Note content"
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "private",
+        "team"
+      ],
+      "default": "team",
+      "description": "Who can see this note"
+    },
+    "mentioned_recruiters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Emails of recruiters mentioned in note"
+    },
+    "note_type": {
+      "type": "string",
+      "enum": [
+        "general",
+        "screening",
+        "interview",
+        "decision"
+      ],
+      "default": "general",
+      "description": "Type of note"
+    }
+  },
+  "required": [
+    "application_id",
+    "author_email",
+    "note"
+  ]
+}

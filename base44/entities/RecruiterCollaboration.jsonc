@@ -1,0 +1,53 @@
+{
+  "name": "RecruiterCollaboration",
+  "type": "object",
+  "properties": {
+    "opportunity_id": {
+      "type": "string",
+      "description": "Associated opportunity ID"
+    },
+    "team_members": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Recruiter emails on the team"
+    },
+    "primary_recruiter": {
+      "type": "string",
+      "description": "Lead recruiter email"
+    },
+    "message": {
+      "type": "string",
+      "description": "Latest team message"
+    },
+    "sender_email": {
+      "type": "string",
+      "description": "Who sent the message"
+    },
+    "message_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sender": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Message thread"
+    }
+  },
+  "required": [
+    "opportunity_id",
+    "primary_recruiter"
+  ]
+}

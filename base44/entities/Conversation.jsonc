@@ -1,0 +1,63 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Participant emails"
+    },
+    "participant_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Participant names for display"
+    },
+    "application_id": {
+      "type": "string",
+      "description": "Related application ID"
+    },
+    "interview_id": {
+      "type": "string",
+      "description": "Related interview ID"
+    },
+    "opportunity_id": {
+      "type": "string",
+      "description": "Related opportunity ID"
+    },
+    "last_message": {
+      "type": "string",
+      "description": "Preview of last message"
+    },
+    "last_message_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last message"
+    },
+    "last_message_sender": {
+      "type": "string",
+      "description": "Email of last message sender"
+    },
+    "unread_count": {
+      "type": "object",
+      "properties": {},
+      "description": "Unread count per participant email"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "archived"
+      ],
+      "default": "active",
+      "description": "Conversation status"
+    }
+  },
+  "required": [
+    "participants"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "name": "InterviewSlot",
+  "type": "object",
+  "properties": {
+    "recruiter_email": {
+      "type": "string",
+      "description": "Recruiter email"
+    },
+    "recruiter_name": {
+      "type": "string",
+      "description": "Recruiter name"
+    },
+    "slot_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the slot"
+    },
+    "start_time": {
+      "type": "string",
+      "description": "Start time (HH:MM)"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "End time (HH:MM)"
+    },
+    "is_available": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether slot is available"
+    },
+    "interview_type": {
+      "type": "string",
+      "enum": [
+        "phone_screen",
+        "technical",
+        "behavioral",
+        "final"
+      ],
+      "default": "phone_screen",
+      "description": "Type of interview"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 60,
+      "description": "Duration in minutes"
+    },
+    "location": {
+      "type": "string",
+      "description": "Meeting location or video link"
+    },
+    "google_calendar_event_id": {
+      "type": "string",
+      "description": "Google Calendar event ID"
+    },
+    "booked_by": {
+      "type": "string",
+      "description": "Candidate email who booked"
+    },
+    "application_id": {
+      "type": "string",
+      "description": "Associated application"
+    }
+  },
+  "required": [
+    "recruiter_email",
+    "slot_date",
+    "start_time",
+    "end_time"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "name": "Flag",
+  "type": "object",
+  "properties": {
+    "reporter_email": {
+      "type": "string",
+      "description": "User who reported the issue"
+    },
+    "target_type": {
+      "type": "string",
+      "enum": [
+        "opportunity",
+        "user",
+        "message"
+      ],
+      "description": "Type of content being flagged"
+    },
+    "target_id": {
+      "type": "string",
+      "description": "ID of flagged content"
+    },
+    "reason": {
+      "type": "string",
+      "enum": [
+        "spam",
+        "scam",
+        "inappropriate",
+        "misleading",
+        "other"
+      ],
+      "description": "Flag reason"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed explanation"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "reviewing",
+        "resolved",
+        "dismissed"
+      ],
+      "default": "pending"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "Admin who reviewed"
+    },
+    "resolution_notes": {
+      "type": "string",
+      "description": "Admin notes on resolution"
+    }
+  },
+  "required": [
+    "reporter_email",
+    "target_type",
+    "target_id",
+    "reason"
+  ]
+}

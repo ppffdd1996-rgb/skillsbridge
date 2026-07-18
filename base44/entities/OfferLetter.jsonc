@@ -1,0 +1,78 @@
+{
+  "name": "OfferLetter",
+  "type": "object",
+  "properties": {
+    "candidate_email": {
+      "type": "string",
+      "description": "Candidate email address"
+    },
+    "candidate_name": {
+      "type": "string",
+      "description": "Candidate full name"
+    },
+    "opportunity_id": {
+      "type": "string",
+      "description": "Associated opportunity ID"
+    },
+    "job_title": {
+      "type": "string",
+      "description": "Position title"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Proposed start date"
+    },
+    "salary": {
+      "type": "string",
+      "description": "Annual salary or compensation"
+    },
+    "benefits": {
+      "type": "string",
+      "description": "Benefits summary"
+    },
+    "offer_document_url": {
+      "type": "string",
+      "description": "URL to generated offer letter PDF"
+    },
+    "signature_request_id": {
+      "type": "string",
+      "description": "E-signature service request ID"
+    },
+    "signature_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "signed",
+        "declined"
+      ],
+      "default": "pending",
+      "description": "Signature status"
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When offer was signed"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When offer was sent"
+    },
+    "recruiter_email": {
+      "type": "string",
+      "description": "Recruiter who created offer"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "candidate_email",
+    "candidate_name",
+    "job_title",
+    "start_date"
+  ]
+}

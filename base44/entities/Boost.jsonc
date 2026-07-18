@@ -1,0 +1,66 @@
+{
+  "name": "Boost",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User who purchased the boost"
+    },
+    "boost_type": {
+      "type": "string",
+      "enum": [
+        "profile",
+        "opportunity"
+      ],
+      "description": "Type of boost"
+    },
+    "target_id": {
+      "type": "string",
+      "description": "Profile or opportunity ID"
+    },
+    "duration_days": {
+      "type": "number",
+      "description": "Boost duration in days"
+    },
+    "price": {
+      "type": "number",
+      "description": "Price paid in cents"
+    },
+    "stripe_payment_intent_id": {
+      "type": "string",
+      "description": "Stripe payment intent ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "active",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When boost started"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When boost expires"
+    },
+    "impressions": {
+      "type": "number",
+      "default": 0,
+      "description": "Total impressions gained"
+    }
+  },
+  "required": [
+    "user_email",
+    "boost_type",
+    "target_id",
+    "duration_days",
+    "price"
+  ]
+}

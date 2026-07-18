@@ -1,0 +1,123 @@
+{
+  "name": "TalentPoolMember",
+  "type": "object",
+  "properties": {
+    "talent_pool_id": {
+      "type": "string",
+      "description": "Associated talent pool ID"
+    },
+    "candidate_email": {
+      "type": "string",
+      "description": "Candidate email address"
+    },
+    "candidate_name": {
+      "type": "string",
+      "description": "Candidate full name"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of candidate skills"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Custom tags for categorization"
+    },
+    "experience_level": {
+      "type": "string",
+      "enum": [
+        "entry",
+        "mid",
+        "senior",
+        "lead",
+        "executive"
+      ],
+      "description": "Experience level"
+    },
+    "years_experience": {
+      "type": "number",
+      "description": "Total years of experience"
+    },
+    "interview_rating": {
+      "type": "number",
+      "description": "Average interview rating (1-5)"
+    },
+    "last_interview_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date of last interview"
+    },
+    "last_interview_notes": {
+      "type": "string",
+      "description": "Notes from last interview"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "placed",
+        "rejected"
+      ],
+      "default": "active",
+      "description": "Current status in pool"
+    },
+    "availability": {
+      "type": "string",
+      "enum": [
+        "immediately",
+        "2-weeks",
+        "1-month",
+        "3-months",
+        "not-available"
+      ],
+      "default": "not-available",
+      "description": "Availability to start work"
+    },
+    "preferred_roles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Job titles or roles candidate is interested in"
+    },
+    "salary_expectation": {
+      "type": "string",
+      "description": "Salary range expectation"
+    },
+    "location_preference": {
+      "type": "string",
+      "description": "Preferred work location"
+    },
+    "portfolio_url": {
+      "type": "string",
+      "description": "Link to candidate portfolio"
+    },
+    "linkedin_url": {
+      "type": "string",
+      "description": "LinkedIn profile URL"
+    },
+    "quality_score": {
+      "type": "number",
+      "description": "AI-calculated candidate quality score (0-100)"
+    },
+    "match_opportunities_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of matched opportunities"
+    }
+  },
+  "required": [
+    "talent_pool_id",
+    "candidate_email",
+    "candidate_name"
+  ]
+}

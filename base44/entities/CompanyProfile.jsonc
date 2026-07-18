@@ -1,0 +1,118 @@
+{
+  "name": "CompanyProfile",
+  "type": "object",
+  "properties": {
+    "recruiter_email": {
+      "type": "string",
+      "description": "Company owner email"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Industry sector"
+    },
+    "company_size": {
+      "type": "string",
+      "enum": [
+        "1-10",
+        "11-50",
+        "51-200",
+        "201-500",
+        "501-1000",
+        "1000+"
+      ],
+      "description": "Number of employees"
+    },
+    "description": {
+      "type": "string",
+      "description": "AI-generated company description"
+    },
+    "mission_statement": {
+      "type": "string",
+      "description": "AI-generated mission statement"
+    },
+    "culture_highlights": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Key culture points"
+    },
+    "values": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Company values"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "AI-suggested keywords"
+    },
+    "target_candidate_pools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Target talent segments"
+    },
+    "branding_elements": {
+      "type": "object",
+      "properties": {
+        "primary_color": {
+          "type": "string"
+        },
+        "secondary_color": {
+          "type": "string"
+        },
+        "tone": {
+          "type": "string"
+        },
+        "personality": {
+          "type": "string"
+        }
+      },
+      "description": "AI-suggested branding"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "Company logo URL"
+    },
+    "website": {
+      "type": "string",
+      "description": "Company website"
+    },
+    "location": {
+      "type": "string",
+      "description": "Primary location"
+    },
+    "benefits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Employee benefits"
+    },
+    "is_published": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether profile is public"
+    }
+  },
+  "required": [
+    "recruiter_email",
+    "company_name",
+    "industry"
+  ]
+}

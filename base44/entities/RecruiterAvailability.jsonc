@@ -1,0 +1,38 @@
+{
+  "name": "RecruiterAvailability",
+  "type": "object",
+  "properties": {
+    "recruiter_email": {
+      "type": "string",
+      "description": "Recruiter's email"
+    },
+    "day_of_week": {
+      "type": "number",
+      "description": "0=Sunday, 6=Saturday"
+    },
+    "start_time": {
+      "type": "string",
+      "description": "Start time in HH:MM format"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "End time in HH:MM format"
+    },
+    "timezone": {
+      "type": "string",
+      "default": "America/Los_Angeles",
+      "description": "Timezone for availability"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this availability is active"
+    }
+  },
+  "required": [
+    "recruiter_email",
+    "day_of_week",
+    "start_time",
+    "end_time"
+  ]
+}

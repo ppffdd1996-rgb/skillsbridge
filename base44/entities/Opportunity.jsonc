@@ -1,0 +1,148 @@
+{
+  "name": "Opportunity",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Title of the opportunity"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Name of the company"
+    },
+    "company_description": {
+      "type": "string",
+      "description": "AI-generated company description"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Company industry"
+    },
+    "company_size": {
+      "type": "string",
+      "enum": [
+        "startup",
+        "small",
+        "medium",
+        "large",
+        "enterprise"
+      ],
+      "description": "Company size category"
+    },
+    "key_responsibilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of key responsibilities for the role"
+    },
+    "required_qualifications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required qualifications and experience"
+    },
+    "skills_required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required skills"
+    },
+    "effort": {
+      "type": "string",
+      "description": "Time commitment (e.g., '2-4 hrs/week')"
+    },
+    "compensation_type": {
+      "type": "string",
+      "enum": [
+        "hourly",
+        "fixed",
+        "equity",
+        "mixed"
+      ],
+      "description": "Type of compensation"
+    },
+    "compensation_amount": {
+      "type": "string",
+      "description": "Compensation details"
+    },
+    "has_trial_task": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether there's a paid trial task"
+    },
+    "trial_task_description": {
+      "type": "string",
+      "description": "Description of trial task"
+    },
+    "trial_task_pay": {
+      "type": "string",
+      "description": "Payment for trial task"
+    },
+    "path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Steps to completion",
+      "default": [
+        "review",
+        "match"
+      ]
+    },
+    "creator_id": {
+      "type": "string",
+      "description": "User who created this opportunity"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "filled"
+      ],
+      "default": "active"
+    },
+    "match_threshold": {
+      "type": "number",
+      "default": 0.7,
+      "description": "Minimum match score (0-1)"
+    },
+    "location_type": {
+      "type": "string",
+      "enum": [
+        "remote",
+        "hybrid",
+        "on-site"
+      ],
+      "default": "remote"
+    },
+    "location": {
+      "type": "string",
+      "description": "Location if not remote"
+    },
+    "boosted_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Opportunity boost expiration date"
+    },
+    "boost_impressions": {
+      "type": "number",
+      "default": 0,
+      "description": "Views during boost period"
+    }
+  },
+  "required": [
+    "title",
+    "description",
+    "skills_required",
+    "effort",
+    "creator_id"
+  ]
+}

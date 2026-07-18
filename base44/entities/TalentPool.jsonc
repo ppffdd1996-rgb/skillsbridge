@@ -1,0 +1,51 @@
+{
+  "name": "TalentPool",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Pool name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Pool description"
+    },
+    "owner_email": {
+      "type": "string",
+      "description": "Creator of the pool"
+    },
+    "shared_with": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Recruiter emails with access"
+    },
+    "candidate_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Candidate emails in pool"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Pool tags/categories"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether all recruiters can access"
+    }
+  },
+  "required": [
+    "name",
+    "owner_email"
+  ]
+}

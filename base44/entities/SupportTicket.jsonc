@@ -1,0 +1,99 @@
+{
+  "name": "SupportTicket",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User who submitted the ticket"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "User's name"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Ticket subject"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the issue"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "technical",
+        "billing",
+        "account",
+        "feature_request",
+        "other"
+      ],
+      "default": "other",
+      "description": "Ticket category"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium",
+      "description": "Ticket priority"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "in_progress",
+        "waiting_response",
+        "resolved",
+        "closed"
+      ],
+      "default": "open",
+      "description": "Ticket status"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Admin email assigned to ticket"
+    },
+    "admin_response": {
+      "type": "string",
+      "description": "Admin's response"
+    },
+    "responded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When admin responded"
+    },
+    "resolved_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When ticket was resolved"
+    },
+    "conversation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sender": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Ticket conversation history"
+    }
+  },
+  "required": [
+    "user_email",
+    "subject",
+    "description"
+  ]
+}

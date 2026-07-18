@@ -1,0 +1,49 @@
+{
+  "name": "EmailTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template name"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Email subject with {{variable}} placeholders"
+    },
+    "body": {
+      "type": "string",
+      "description": "Email body content with {{variable}} placeholders"
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of variable names used in template (e.g., candidate_name, company_name)"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "interview_invitation",
+        "follow_up",
+        "offer",
+        "rejection",
+        "candidate_outreach",
+        "general"
+      ],
+      "default": "general",
+      "description": "Template category"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether template is active for use"
+    }
+  },
+  "required": [
+    "name",
+    "subject",
+    "body"
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "name": "OnboardingTask",
+  "type": "object",
+  "properties": {
+    "employee_email": {
+      "type": "string",
+      "description": "Employee email address"
+    },
+    "employee_name": {
+      "type": "string",
+      "description": "Employee full name"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Employee start date"
+    },
+    "task_title": {
+      "type": "string",
+      "description": "Task name"
+    },
+    "task_category": {
+      "type": "string",
+      "enum": [
+        "pre-boarding",
+        "day-1",
+        "first-week",
+        "first-month"
+      ],
+      "description": "Task category/timing"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When task should be completed"
+    },
+    "description": {
+      "type": "string",
+      "description": "Task details and instructions"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Email of person responsible for task"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "skipped"
+      ],
+      "default": "pending",
+      "description": "Task status"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When task was completed"
+    },
+    "reminder_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether reminder was sent"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Task completion notes"
+    }
+  },
+  "required": [
+    "employee_email",
+    "employee_name",
+    "task_title",
+    "start_date"
+  ]
+}

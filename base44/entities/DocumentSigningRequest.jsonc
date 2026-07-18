@@ -1,0 +1,116 @@
+{
+  "name": "DocumentSigningRequest",
+  "type": "object",
+  "properties": {
+    "document_id": {
+      "type": "string",
+      "description": "Associated document ID (offer letter or HR document)"
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "offer_letter",
+        "hr_document",
+        "employment_contract",
+        "nda"
+      ],
+      "description": "Type of document"
+    },
+    "signer_email": {
+      "type": "string",
+      "description": "Email of person who needs to sign"
+    },
+    "signer_name": {
+      "type": "string",
+      "description": "Name of signer"
+    },
+    "signing_service": {
+      "type": "string",
+      "enum": [
+        "docusign",
+        "hellosign",
+        "adobe_sign",
+        "manual"
+      ],
+      "default": "docusign",
+      "description": "E-signature service used"
+    },
+    "signing_request_id": {
+      "type": "string",
+      "description": "Request ID from signing service"
+    },
+    "document_url": {
+      "type": "string",
+      "description": "URL to document being signed"
+    },
+    "signing_link": {
+      "type": "string",
+      "description": "Link sent to signer"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "sent",
+        "viewed",
+        "signed",
+        "declined",
+        "expired"
+      ],
+      "default": "pending",
+      "description": "Signing status"
+    },
+    "sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When signing request was sent"
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When document was signed"
+    },
+    "signed_document_url": {
+      "type": "string",
+      "description": "URL to signed document"
+    },
+    "signers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "signed_at": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "List of signers and their status"
+    },
+    "reminder_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether reminder was sent"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When signing request expires"
+    }
+  },
+  "required": [
+    "document_id",
+    "document_type",
+    "signer_email",
+    "signer_name"
+  ]
+}

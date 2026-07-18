@@ -1,0 +1,70 @@
+{
+  "name": "Interview",
+  "type": "object",
+  "properties": {
+    "application_id": {
+      "type": "string",
+      "description": "Associated application ID"
+    },
+    "recruiter_email": {
+      "type": "string",
+      "description": "Recruiter conducting the interview"
+    },
+    "candidate_email": {
+      "type": "string",
+      "description": "Candidate being interviewed"
+    },
+    "scheduled_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled interview time"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 60,
+      "description": "Interview duration in minutes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "confirmed",
+        "cancelled",
+        "completed",
+        "rescheduled"
+      ],
+      "default": "scheduled",
+      "description": "Interview status"
+    },
+    "meeting_link": {
+      "type": "string",
+      "description": "Video meeting link"
+    },
+    "location": {
+      "type": "string",
+      "description": "Physical location or video platform"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or instructions"
+    },
+    "calendar_event_id": {
+      "type": "string",
+      "description": "External calendar event ID"
+    },
+    "rescheduled_from": {
+      "type": "string",
+      "description": "Original interview ID if rescheduled"
+    },
+    "cancellation_reason": {
+      "type": "string",
+      "description": "Reason for cancellation"
+    }
+  },
+  "required": [
+    "application_id",
+    "recruiter_email",
+    "candidate_email",
+    "scheduled_time"
+  ]
+}

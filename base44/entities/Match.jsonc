@@ -1,0 +1,83 @@
+{
+  "name": "Match",
+  "type": "object",
+  "properties": {
+    "talent_email": {
+      "type": "string",
+      "description": "Email of the talent user"
+    },
+    "opportunity_id": {
+      "type": "string",
+      "description": "ID of the opportunity"
+    },
+    "match_score": {
+      "type": "number",
+      "description": "Calculated match score (0-1)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "talent_interested",
+        "creator_interested",
+        "mutual_interest",
+        "in_trial",
+        "completed",
+        "declined"
+      ],
+      "default": "pending"
+    },
+    "talent_interested": {
+      "type": "boolean",
+      "default": false
+    },
+    "creator_interested": {
+      "type": "boolean",
+      "default": false
+    },
+    "chat_unlocked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether direct messaging is enabled"
+    },
+    "matched_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Skills that matched"
+    },
+    "missing_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Skills required but not possessed"
+    },
+    "trial_task_status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "in_progress",
+        "submitted",
+        "reviewed",
+        "accepted",
+        "rejected"
+      ],
+      "description": "Status of trial task if applicable"
+    },
+    "trial_task_submission_url": {
+      "type": "string",
+      "description": "URL to submitted trial task"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Private notes from either party"
+    }
+  },
+  "required": [
+    "talent_email",
+    "opportunity_id",
+    "match_score"
+  ]
+}

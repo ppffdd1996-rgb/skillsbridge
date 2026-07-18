@@ -1,0 +1,149 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "display_name": {
+      "type": "string",
+      "description": "Public display name"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "Profile picture URL"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Short bio"
+    },
+    "location": {
+      "type": "string",
+      "description": "User location"
+    },
+    "website": {
+      "type": "string",
+      "description": "Personal website"
+    },
+    "verified_talent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether talent is verified"
+    },
+    "education": {
+      "type": "object",
+      "properties": {
+        "college_name": {
+          "type": "string"
+        },
+        "college_location": {
+          "type": "string"
+        },
+        "college_type": {
+          "type": "string"
+        },
+        "college_programs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "degree": {
+          "type": "string"
+        },
+        "major": {
+          "type": "string"
+        },
+        "graduation_year": {
+          "type": "string"
+        },
+        "gpa": {
+          "type": "string"
+        }
+      }
+    },
+    "work_preferences": {
+      "type": "object",
+      "properties": {
+        "availability": {
+          "type": "string",
+          "enum": [
+            "full-time",
+            "part-time",
+            "freelance",
+            "contract"
+          ]
+        },
+        "remote_preference": {
+          "type": "string",
+          "enum": [
+            "remote-only",
+            "hybrid",
+            "on-site",
+            "flexible"
+          ]
+        },
+        "min_compensation": {
+          "type": "number"
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "properties": {
+        "profile_visibility": {
+          "type": "string",
+          "enum": [
+            "public",
+            "recruiters-only",
+            "private"
+          ],
+          "default": "public"
+        },
+        "show_email": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "portfolio_projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "boosted_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Profile boost expiration date"
+    },
+    "boost_impressions": {
+      "type": "number",
+      "default": 0,
+      "description": "Views during boost period"
+    }
+  },
+  "required": [
+    "display_name",
+    "avatar_url",
+    "bio",
+    "location",
+    "website",
+    "education",
+    "work_preferences",
+    "privacy",
+    "portfolio_projects",
+    "boosted_until"
+  ]
+}

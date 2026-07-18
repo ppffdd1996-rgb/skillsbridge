@@ -1,0 +1,51 @@
+{
+  "name": "Payment",
+  "type": "object",
+  "properties": {
+    "match_id": {
+      "type": "string",
+      "description": "Associated match"
+    },
+    "payer_email": {
+      "type": "string",
+      "description": "Creator paying"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Amount in cents"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD"
+    },
+    "payment_intent_id": {
+      "type": "string",
+      "description": "Stripe payment intent ID"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "refunded"
+      ],
+      "default": "pending"
+    },
+    "payment_type": {
+      "type": "string",
+      "enum": [
+        "match_fee",
+        "trial_task",
+        "subscription"
+      ],
+      "description": "Type of payment"
+    }
+  },
+  "required": [
+    "payer_email",
+    "amount",
+    "payment_type"
+  ]
+}
