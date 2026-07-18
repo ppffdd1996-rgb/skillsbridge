@@ -10,6 +10,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ReferralsPage from './pages/Referrals';
 import ScorecardsPage from './pages/Scorecards';
 import ReferralProgramPage from './pages/ReferralProgram';
+import CandidateRankingsPage from './pages/CandidateRankings';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -74,6 +75,11 @@ const AuthenticatedApp = () => {
       <Route path="/ReferralProgram" element={
         <LayoutWrapper currentPageName="ReferralProgram">
           <ReferralProgramPage />
+        </LayoutWrapper>
+      } />
+      <Route path="/CandidateRankings" element={
+        <LayoutWrapper currentPageName="CandidateRankings">
+          <CandidateRankingsPage />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />
