@@ -13,6 +13,7 @@ import ReferralProgramPage from './pages/ReferralProgram';
 import CandidateRankingsPage from './pages/CandidateRankings';
 import OfferManagementPage from './pages/OfferManagement';
 import InterviewFeedbackPage from './pages/InterviewFeedback';
+import CandidateOnboardingPage from './pages/CandidateOnboarding';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -92,6 +93,11 @@ const AuthenticatedApp = () => {
       <Route path="/InterviewFeedback" element={
         <LayoutWrapper currentPageName="InterviewFeedback">
           <InterviewFeedbackPage />
+        </LayoutWrapper>
+      } />
+      <Route path="/CandidateOnboarding" element={
+        <LayoutWrapper currentPageName="CandidateOnboarding">
+          <CandidateOnboardingPage />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />
