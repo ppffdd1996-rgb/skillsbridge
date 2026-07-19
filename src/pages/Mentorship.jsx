@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Search, Users, Sparkles, MessageSquare, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { Loader2, Search, Users, Sparkles, MessageSquare, CheckCircle2, Clock, XCircle, AlertTriangle } from 'lucide-react';
 import MentorCard from '@/components/mentorship/MentorCard';
 import MentorshipRequestDialog from '@/components/mentorship/MentorshipRequestDialog';
 
@@ -143,6 +143,26 @@ export default function MentorshipPage() {
             <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
             <p className="text-gray-600">Finding your best mentor matches...</p>
           </CardContent></Card>
+        )}
+
+        {matchMutation.data?.success && matchMutation.data.skill_gaps?.length > 0 && (
+          <Card className="mb-6 bg-amber-50/60 border-amber-200">
+            <CardContent className="pt-5">
+              <h2 className="font-semibold text-gray-900 flex items-center gap-2"><AlertTriangle className="w-5 h-5 text-amber-600" /> Skill Gaps Identified for Your Goals</h2>
+              <p className="text-sm text-gray-600 mb-3">Mentors below are ranked by how well they can help close these gaps.</p>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {matchMutation.data.skill_gaps.map((g, i) => (
+                  <div key={i} className="flex items-start gap-2 p-2.5 rounded-lg bg-white border border-amber-100">
+                    <Badge className={g.priority === 'high' ? 'bg-red-100 text-red-700' : g.priority === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}>{g.priority}</Badge>
+                    <div>
+                      <p className="font-medium text-gray-900 text-sm">{g.skill}</p>
+                      {g.why && <p className="text-xs text-gray-600 mt-0.5">{g.why}</p>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {matchMutation.data?.success && matchMutation.data.ranked_mentors?.length > 0 && (

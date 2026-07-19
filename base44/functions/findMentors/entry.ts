@@ -16,16 +16,16 @@ Deno.serve(async (req) => {
 
     if (mentors.length === 0) return Response.json({ success: true, ranked_mentors: [], message: 'No mentors available yet' });
 
-    // AI ranks mentors for this candidate
+    // AI: identify the candidate's skill gaps for their goal, then rank mentors who can close them
     const ranking = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `Rank available mentors for a candidate seeking career guidance. Score and order each mentor by fit.
+      prompt: `A candidate wants mentorship. First infer their skill gaps relative to their career goal and target industry, then rank the available mentors by how well they can close those gaps and advance the candidate's goals.
 
 CANDIDATE:
 ${JSON.stringify({
   name: user.full_name,
   target_industry: body.target_industry || 'unspecified',
   career_goals: body.career_goals || 'unspecified',
-  skills: candidateSkills.map(s => s.name)
+  current_skills: candidateSkills.map(s => ({ name: s.name, level: s.level, years_experience: s.years_experience }))
 }, null, 2)}
 
 AVAILABLE MENTORS:
@@ -43,10 +43,23 @@ ${JSON.stringify(mentors.map(m => ({
   max_mentees: m.max_mentees
 })), null, 2)}
 
-Return the mentors ranked best-first. For each: id, fit_score (0-100), match_reasons (2-3 short bullets explaining why they fit), recommended_topics (1-3 topics from their guidance_topics most relevant to the candidate).`,
+Step 1 — infer up to 6 skill_gaps the candidate most needs to close to reach their career goal (skills they lack or are weak at, given their current skills and target industry). Each gap: skill (name), priority (high/medium/low), why (one short sentence tying it to their goal).
+
+Step 2 — rank mentors best-first by their ability to help close those gaps and advance the candidate's career goals. For each: id, fit_score (0-100), match_reasons (2-3 short bullets — reference the specific skill gaps or goals they address), recommended_topics (1-3 topics from their guidance_topics most relevant), addresses_gaps (the gap skills this mentor can help with).`,
       response_json_schema: {
         type: "object",
         properties: {
+          skill_gaps: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                skill: { type: "string" },
+                priority: { type: "string" },
+                why: { type: "string" }
+              }
+            }
+          },
           ranked_mentors: {
             type: "array",
             items: {
@@ -55,7 +68,8 @@ Return the mentors ranked best-first. For each: id, fit_score (0-100), match_rea
                 id: { type: "string" },
                 fit_score: { type: "number" },
                 match_reasons: { type: "array", items: { type: "string" } },
-                recommended_topics: { type: "array", items: { type: "string" } }
+                recommended_topics: { type: "array", items: { type: "string" } },
+                addresses_gaps: { type: "array", items: { type: "string" } }
               }
             }
           }
@@ -73,12 +87,17 @@ Return the mentors ranked best-first. For each: id, fit_score (0-100), match_rea
           ...m,
           fit_score: r.fit_score,
           match_reasons: r.match_reasons || [],
-          recommended_topics: r.recommended_topics || []
+          recommended_topics: r.recommended_topics || [],
+          addresses_gaps: r.addresses_gaps || []
         };
       })
       .filter(Boolean);
 
-    return Response.json({ success: true, ranked_mentors: ranked });
+    return Response.json({
+      success: true,
+      skill_gaps: ranking.skill_gaps || [],
+      ranked_mentors: ranked
+    });
   } catch (error) {
     console.error('findMentors error:', error);
     return Response.json({ error: error.message }, { status: 500 });

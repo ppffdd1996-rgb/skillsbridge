@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Star, MapPin, Briefcase, Sparkles, Link2 } from 'lucide-react';
+import { Star, MapPin, Briefcase, Sparkles, Link2, CheckCircle2 } from 'lucide-react';
 
 export default function MentorCard({ mentor, onConnect }) {
   const initials = mentor.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?';
@@ -43,6 +43,14 @@ export default function MentorCard({ mentor, onConnect }) {
         {mentor.expertise_areas?.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-3">
             {mentor.expertise_areas.slice(0, 4).map((e, i) => <Badge key={i} variant="secondary" className="text-xs">{e}</Badge>)}
+          </div>
+        )}
+
+        {mentor.addresses_gaps?.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1">
+            {mentor.addresses_gaps.map((g, i) => (
+              <Badge key={i} className="bg-green-100 text-green-700 text-xs gap-1"><CheckCircle2 className="w-3 h-3" />{g}</Badge>
+            ))}
           </div>
         )}
 
