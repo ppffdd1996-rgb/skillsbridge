@@ -46,6 +46,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Career Match', page: 'CareerMatch', icon: Sparkles },
     { name: 'Community', page: 'Community', icon: Globe, authRequired: true },
     { name: 'Job Readiness', page: 'JobReadiness', icon: Gauge, authRequired: true },
+    { name: 'Mentorship', page: 'Mentorship', icon: Users, authRequired: true },
     { name: 'Skill Dev', page: 'SkillDevelopment', icon: TrendingUp, authRequired: true },
     { name: 'All Features', page: 'Features', icon: Target },
   ];

@@ -16,6 +16,7 @@ import InterviewFeedbackPage from './pages/InterviewFeedback';
 import CandidateOnboardingPage from './pages/CandidateOnboarding';
 import CommunityPage from './pages/Community';
 import JobReadinessPage from './pages/JobReadiness';
+import MentorshipPage from './pages/Mentorship';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -110,6 +111,11 @@ const AuthenticatedApp = () => {
       <Route path="/JobReadiness" element={
         <LayoutWrapper currentPageName="JobReadiness">
           <JobReadinessPage />
+        </LayoutWrapper>
+      } />
+      <Route path="/Mentorship" element={
+        <LayoutWrapper currentPageName="Mentorship">
+          <MentorshipPage />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />

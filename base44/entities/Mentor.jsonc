@@ -1,0 +1,88 @@
+{
+  "name": "Mentor",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Mentor's full name"
+    },
+    "email": {
+      "type": "string",
+      "description": "Mentor's email"
+    },
+    "title": {
+      "type": "string",
+      "description": "Current job title"
+    },
+    "company": {
+      "type": "string",
+      "description": "Current company"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Primary industry"
+    },
+    "expertise_areas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Areas of expertise"
+    },
+    "years_experience": {
+      "type": "number",
+      "description": "Years of professional experience"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Short professional bio"
+    },
+    "guidance_topics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Topics mentor can guide on (career growth, interviews, leadership, etc.)"
+    },
+    "linkedin_url": {
+      "type": "string",
+      "description": "LinkedIn profile URL"
+    },
+    "profile_picture_url": {
+      "type": "string",
+      "description": "Profile image URL"
+    },
+    "max_mentees": {
+      "type": "number",
+      "default": 3,
+      "description": "Maximum active mentees"
+    },
+    "current_mentee_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Current active mentees"
+    },
+    "is_available": {
+      "type": "boolean",
+      "default": true,
+      "description": "Accepting new mentees"
+    },
+    "rating": {
+      "type": "number",
+      "default": 5,
+      "description": "Average rating (1-5)"
+    },
+    "location": {
+      "type": "string",
+      "description": "Geographic location"
+    }
+  },
+  "required": [
+    "name",
+    "email",
+    "title",
+    "industry"
+  ]
+}

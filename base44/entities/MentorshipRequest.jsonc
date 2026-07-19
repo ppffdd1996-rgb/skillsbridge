@@ -1,0 +1,77 @@
+{
+  "name": "MentorshipRequest",
+  "type": "object",
+  "properties": {
+    "mentor_id": {
+      "type": "string",
+      "description": "Associated mentor ID"
+    },
+    "mentor_name": {
+      "type": "string",
+      "description": "Mentor name (denormalized)"
+    },
+    "mentee_email": {
+      "type": "string",
+      "description": "Candidate requesting mentorship"
+    },
+    "mentee_name": {
+      "type": "string",
+      "description": "Candidate name"
+    },
+    "mentee_industry": {
+      "type": "string",
+      "description": "Candidate's target industry"
+    },
+    "mentee_title": {
+      "type": "string",
+      "description": "Candidate's current title"
+    },
+    "career_goals": {
+      "type": "string",
+      "description": "What the candidate wants guidance on"
+    },
+    "specific_topics": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Specific topics requested"
+    },
+    "message": {
+      "type": "string",
+      "description": "Personal message to mentor"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "declined",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Request lifecycle status"
+    },
+    "requested_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When request was made"
+    },
+    "responded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When mentor responded"
+    },
+    "mentor_response": {
+      "type": "string",
+      "description": "Mentor's response note"
+    }
+  },
+  "required": [
+    "mentor_id",
+    "mentee_email",
+    "mentee_name"
+  ]
+}
